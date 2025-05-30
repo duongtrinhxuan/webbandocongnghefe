@@ -4,6 +4,7 @@ import AdminNav from "../components/AdminNav";
 import { ShopDetails } from "../data/shopdetail";
 import { editShop, getShop } from "../services/shopService";
 import { uploadToFirebase } from "./ChinhSuaSanPham";
+import { Box, Typography, Paper, Button, InputBase } from "@mui/material";
 
 export default function EditShop() {
   const [shop, setShop] = useState<ShopDetails>({
@@ -17,7 +18,7 @@ export default function EditShop() {
   });
   const nav = useNavigate();
   const { id: shopId } = useParams();
-  //call api getShop
+
   useEffect(() => {
     getShop(shopId as string).then((data) => {
       setShop({
@@ -31,6 +32,7 @@ export default function EditShop() {
       });
     });
   }, []);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setShop((prev) => ({
@@ -38,17 +40,17 @@ export default function EditShop() {
       [name]: value,
     }));
   };
+
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const file = event.target.files?.[0];
     if (file) {
       const url = await uploadToFirebase(file);
-      setShop((prev) => ({ ...prev, image: url })); // Cập nhật URL ảnh vào productData
+      setShop((prev) => ({ ...prev, image: url }));
     }
   };
 
-  //call api editShop
   const edit = () => {
     const isEmptyField = Object.entries(shop).some(([key, value]) => {
       if (key === "rating" || key === "userName") return false;
@@ -63,65 +65,138 @@ export default function EditShop() {
       nav("/admin/QuanLyShop");
     });
   };
+
   const cancel = () => {
     nav("/admin/QuanLyShop");
   };
+
   return (
-    <div className="flex w-full">
+    <Box className="flex w-screen">
       <AdminNav />
-      <div className="mt-10 ml-10 w-[75vw]">
-        <h1 className="font-bold text-2xl mb-3">Chỉnh sửa Shop</h1>
-        <form className="space-y-4 w-full md:w-1/2 max-w-lg border border-gray-300 p-4 md:p-8 rounded-lg shadow-md bg-white bg-opacity-40">
-          <div className="mb-4">
-            <label className="block mb-2 text-gray-800 font-medium">
-              Ảnh minh họa
-            </label>
-            <input type="file" onChange={handleFileChange} />
-          </div>
-
-          <div>
-            <label className="block mb-2 text-gray-800 font-medium">
-              Tên Shop
-            </label>
-            <input
-              type="text"
-              value={shop.name}
-              name="name"
-              onChange={handleChange}
-              className="px-4 py-2 border border-gray-300 w-full rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-700"
-            />
-          </div>
-
-          <div>
-            <label className="block mb-2 text-gray-800 font-medium">
-              Địa chỉ
-            </label>
-            <input
-              type="text"
-              value={shop.address}
-              name="address"
-              onChange={handleChange}
-              className="px-4 py-2 border border-gray-300 w-full rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-700"
-            />
-          </div>
-          
-        </form>
-        <div className="w-full">
-          <button
-            style={{ backgroundColor: "#1E3A8A" }}
-            className=" text-white px-6 py-2 rounded-md mt-10 ml-8"
-            onClick={edit}
-          >
-            Chỉnh sửa
-          </button>
-          <button
-            className="border bg-white text-black px-6 py-2 rounded-md mt-10 ml-12"
-            onClick={cancel}
-          >
-            Hủy bỏ
-          </button>
-        </div>
-      </div>
-    </div>
+      <Box
+        flex={1}
+        p={3}
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        minHeight="100vh"
+        sx={{ background: "#f9f9f9" }}
+      >
+        <Paper
+          elevation={3}
+          sx={{
+            width: "100%",
+            maxWidth: 500,
+            p: 4,
+            borderRadius: 3,
+            background: "#fff",
+            mt: 2,
+            boxSizing: "border-box",
+          }}
+        >
+          <Typography variant="h4" gutterBottom sx={{ color: "#1E3A8A", textAlign: "center" }}>
+            Chỉnh sửa Shop
+          </Typography>
+          <Box display="flex" flexDirection="column" gap={2}>
+            <Box>
+              <Typography fontWeight={600} mb={1}>
+                Ảnh minh họa
+              </Typography>
+              <InputBase
+                type="file"
+                onChange={handleFileChange}
+                sx={{
+                  backgroundColor: "#F0ECE1",
+                  borderRadius: "8px",
+                  px: 2,
+                  py: 1,
+                  width: "100%",
+                  border: "1px solid #ccc",
+                }}
+                inputProps={{ accept: "image/*" }}
+              />
+              {shop.image && (
+                <Box mt={1}>
+                  <img
+                    src={shop.image}
+                    alt="Ảnh shop"
+                    style={{ width: 80, height: 80, objectFit: "contain", borderRadius: 8 }}
+                  />
+                </Box>
+              )}
+            </Box>
+            <Box>
+              <Typography fontWeight={600} mb={1}>
+                Tên Shop
+              </Typography>
+              <InputBase
+                type="text"
+                value={shop.name}
+                name="name"
+                onChange={handleChange}
+                sx={{
+                  backgroundColor: "#F0ECE1",
+                  borderRadius: "8px",
+                  px: 2,
+                  py: 1,
+                  width: "100%",
+                  border: "1px solid #ccc",
+                }}
+              />
+            </Box>
+            <Box>
+              <Typography fontWeight={600} mb={1}>
+                Địa chỉ
+              </Typography>
+              <InputBase
+                type="text"
+                value={shop.address}
+                name="address"
+                onChange={handleChange}
+                sx={{
+                  backgroundColor: "#F0ECE1",
+                  borderRadius: "8px",
+                  px: 2,
+                  py: 1,
+                  width: "100%",
+                  border: "1px solid #ccc",
+                }}
+              />
+            </Box>
+            <Box display="flex" gap={2} justifyContent="flex-end" mt={2}>
+              <Button
+                variant="contained"
+                sx={{
+                  backgroundColor: "#1E3A8A",
+                  color: "#fff",
+                  borderRadius: "8px",
+                  textTransform: "none",
+                  px: 4,
+                  "&:hover": { backgroundColor: "#155a9c" },
+                }}
+                onClick={edit}
+              >
+                Chỉnh sửa
+              </Button>
+              <Button
+                variant="outlined"
+                sx={{
+                  backgroundColor: "#fff",
+                  color: "#1E3A8A",
+                  border: "1px solid #1E3A8A",
+                  borderRadius: "8px",
+                  textTransform: "none",
+                  px: 4,
+                  "&:hover": { backgroundColor: "#F0ECE1" },
+                }}
+                onClick={cancel}
+              >
+                Hủy bỏ
+              </Button>
+            </Box>
+          </Box>
+        </Paper>
+      </Box>
+    </Box>
   );
 }

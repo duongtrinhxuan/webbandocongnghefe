@@ -4,6 +4,7 @@ import AdminNav from "../components/AdminNav";
 import { User } from "../data/User";
 import { editUser, getUser } from "../services/UserService";
 import { Box, Typography, Paper, Button, InputBase } from "@mui/material";
+
 export default function EditUser() {
   const [user, setUser] = useState<User>({
     id: "",
@@ -13,14 +14,13 @@ export default function EditUser() {
     birthDate: new Date(),
     address: "",
     role: "",
-    phoneNumber:""
+    phoneNumber: ""
   });
   const nav = useNavigate();
   const { id: userId } = useParams();
-  //call api getUser
+
   useEffect(() => {
     getUser(userId as string).then((data) => {
-      console.log(data);
       setUser({
         id: data[0].id,
         email: data[0].email,
@@ -28,13 +28,12 @@ export default function EditUser() {
         password: "",
         birthDate: new Date(data[0].birthDate),
         address: data[0].address,
-        role:data[0].role,
-        phoneNumber:data[0].phoneNumber
+        role: data[0].role,
+        phoneNumber: data[0].phoneNumber
       });
     });
   }, []);
 
-  //call api editUser
   const edit = () => {
     const isEmptyField = Object.entries(user).some(([key, value]) => {
       if (key === "birthDate" || key === "id" || key === "password")
@@ -61,23 +60,34 @@ export default function EditUser() {
       [name]: name === "birthDate" ? new Date(value) : value,
     }));
   };
+
   return (
-     <Box className="flex w-screen">
+    <Box className="flex w-screen">
       <AdminNav />
-      <Box flex={1} p={3}>
-        <Typography variant="h4" gutterBottom sx={{ color: "#1E3A8A" }}>
-          Chỉnh sửa User
-        </Typography>
+      <Box
+        flex={1}
+        p={3}
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        minHeight="100vh"
+        sx={{ background: "#f9f9f9" }}
+      >
         <Paper
           elevation={3}
           sx={{
+            width: "100%",
             maxWidth: 500,
             p: 4,
             borderRadius: 3,
             background: "#fff",
             mt: 2,
+            boxSizing: "border-box",
           }}
         >
+          <Typography variant="h4" gutterBottom sx={{ color: "#1E3A8A", textAlign: "center" }}>
+            Chỉnh sửa User
+          </Typography>
           <Box display="flex" flexDirection="column" gap={2}>
             <Box>
               <Typography fontWeight={600} mb={1}>
