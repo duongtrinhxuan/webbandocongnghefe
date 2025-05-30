@@ -207,7 +207,7 @@ const router = createBrowserRouter([
       element: <Layout />,
       errorElement: <ErrorPage />,
       children: [{ index: true, element: <About/> }],
-    },
+    },  
   ]);
   
   export default router;

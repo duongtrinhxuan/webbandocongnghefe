@@ -8,7 +8,6 @@ const Layout_admin = () => {
     <Box>
       <Navbar_admin />
       <Outlet />
-      <Footer />
     </Box>
   );
 };
