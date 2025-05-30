@@ -5,8 +5,7 @@ import Footer from "../components/Home/Footer";
 
 const Layout_admin = () => {
   return (
-    <Box>
-      <Navbar_admin />
+    <Box>     
       <Outlet />
     </Box>
   );
