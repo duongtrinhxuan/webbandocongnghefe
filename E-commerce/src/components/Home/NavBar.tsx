@@ -1,22 +1,22 @@
-import React, { useEffect }  from "react";
+"use client"
+import React, { useEffect } from "react";
 import {
   Typography,
   AppBar,
   Toolbar,
   IconButton,
-  InputBase,
   Box,
   Drawer,
   List,
   ListItemButton,
   ListItemText,
-  useMediaQuery,
-  useTheme,
-  Avatar,
   Button,
-  Badge
+  Badge,
+  useMediaQuery,
+  createTheme,
+  ThemeProvider
 } from "@mui/material";
-import { Search, ShoppingCart,  Menu, } from "@mui/icons-material";
+import { Search, ShoppingCart, Menu } from "@mui/icons-material";
 import logo from "../../assets/logo.jpg";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
@@ -24,30 +24,43 @@ import { useAuth } from "../Auth/AuthContext";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import useCartStore from "../../zustand/useCartStore";
 
+const customTheme = createTheme({
+  palette: {
+    primary: { main: "#1E3A8A" },
+    secondary: { main: "#F59E42" },
+    background: { default: "#ffffff", paper: "#ffffff" },
+    text: { primary: "#333333" }
+  },
+  typography: {
+    fontFamily: "Roboto, sans-serif",
+    h6: { fontWeight: 700, fontSize: "1.25rem" }
+  }
+});
+
 const Navbar = () => {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const isMobile = useMediaQuery(customTheme.breakpoints.down("md"));
   const [drawerOpen, setDrawerOpen] = React.useState<boolean>(false);
   const { cartDetail } = useCartStore();
-  const {user, logout} = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
+
   useEffect(() => {
-    if (user && user.role === "Admin") {
-      navigate("/admin"); // Điều hướng đến trang admin nếu là admin
-    }
+    // Không tự động điều hướng nếu bạn muốn dùng navBar cho mọi trang
   }, [user, navigate]);
-  useEffect(() => {
-  }, [cartDetail]);
+
   const handleProfileClick = () => {
-    navigate('/profile'); // Điều hướng đến trang chỉnh sửa thông tin cá nhân
+    navigate("/profile");
   };
+
   const handleLogout = () => {
     logout();
-    navigate('/login');
+    navigate("/login");
   };
+
   const handleCart = () => {
-    navigate('/cart');
+    navigate("/cart");
   };
+
   const toggleDrawer =
     (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
       if (
@@ -61,131 +74,110 @@ const Navbar = () => {
     };
 
   const menuItems = (
-    <List
-      style={{
-        display: isMobile ? "block" : "flex",
-        gap: isMobile ? "0" : "20px",
-      }}
-    >
-      <ListItemButton component = {Link} to ="/">
-        <ListItemText
-          primary="Trang chủ"
-          primaryTypographyProps={{ noWrap: true }}
-        />
-      </ListItemButton>
-      <ListItemButton component = {Link} to ="/categories">
-        <ListItemText
-          primary="Sản phẩm"
-          primaryTypographyProps={{ noWrap: true }}
-        />
-      </ListItemButton>
-      <ListItemButton component = {Link} to ="/shops">
-        <ListItemText
-          primary="Shops"
-          primaryTypographyProps={{ noWrap: true }}
-        />
-      </ListItemButton>
-      <ListItemButton component = {Link} to ="/about">
-        <ListItemText
-          primary="About"
-          primaryTypographyProps={{ noWrap: true }}
-        />
-      </ListItemButton>
-      
+    <List sx={{ display: isMobile ? "block" : "flex", gap: isMobile ? 0 : "20px" }}>
+      {[
+        { text: "Trang chủ", to: "/" },
+        { text: "Sản phẩm", to: "/categories" },
+        { text: "Shops", to: "/shops" },
+        { text: "About", to: "/about" }
+      ].map((item) => (
+        <ListItemButton key={item.text} component={Link} to={item.to} sx={{ py: isMobile ? 1.5 : 0 }}>
+          <ListItemText primary={item.text} primaryTypographyProps={{ noWrap: true, sx: { fontWeight: "bold" } }} />
+        </ListItemButton>
+      ))}
     </List>
   );
- 
-  return (
-    <AppBar
-      position="sticky"
-      style={{ backgroundColor: "#FBFAF1", boxShadow: "none", color: "#333" }}
-    >
-      <Toolbar style={{ justifyContent: "space-between" }}>
-        {/* Left section - Logo */}
-        {!isMobile && (
-          <Box display="flex" alignItems="center" gap={1}>
-          <img src={logo} alt="Brand Logo" style={{ height: "60px" }} />
-          <Typography variant="h6" sx={{ color: "blue" }}>
-            SecondHand
-          </Typography>
-        </Box>
-        )}
 
-        {/* Middle Section - Menu */}
-        {isMobile ? (
-          <>
-            <IconButton onClick={toggleDrawer(true)}>
-              <Menu />
-            </IconButton>
-            {/* Drawer for Mobile View */}
-            <Drawer
-              anchor="left"
-              open={drawerOpen}
-              onClose={toggleDrawer(false)}
-            >
-              <Box
-                role="presentation"
-                onClick={toggleDrawer(false)}
-                onKeyDown={toggleDrawer(false)}
-                style={{ width: 250 }}
+  return (
+    <ThemeProvider theme={customTheme}>
+      <AppBar
+        position="sticky"
+        sx={{
+          background: "linear-gradient(90deg, #1E3A8A 0%, #F59E42 100%)",
+          boxShadow: "0px 2px 8px rgba(0,0,0,0.2)",
+          borderBottom: "3px solid #F59E42"
+        }}
+      >
+        <Toolbar sx={{ justifyContent: "space-between", px: { xs: 2, sm: 4 }, py: 1.5 }}>
+          {/* Left section - Logo */}
+          <Box display="flex" alignItems="center" gap={1}>
+            <img src={logo} alt="Brand Logo" style={{ height: "50px", borderRadius: "8px" }} />
+            <Typography variant="h6" sx={{ color: "#ffffff" }}>
+              SecondHand
+            </Typography>
+          </Box>
+
+          {/* Middle Section - Menu */}
+          {isMobile ? (
+            <>
+              <IconButton onClick={toggleDrawer(true)} sx={{ color: "#ffffff" }}>
+                <Menu />
+              </IconButton>
+              <Drawer
+                anchor="left"
+                open={drawerOpen}
+                onClose={toggleDrawer(false)}
+                PaperProps={{ sx: { backgroundColor: "#ffffff" } }}
               >
-                <List>
-                <ListItemButton component = {Link} to ="/">
-                    <ListItemText primary="Trang chủ" />
-                  </ListItemButton>
-                  <ListItemButton component = {Link} to ="/categories">
-                    <ListItemText primary="Sản phẩm" />
-                  </ListItemButton>
-                  <ListItemButton component = {Link} to ="/shops">
-                    <ListItemText primary="Shops" />
-                  </ListItemButton>
-                  <ListItemButton component = {Link} to ="/about">
-                    <ListItemText primary="About" />
-                  </ListItemButton>
-                </List>
-              </Box>
-            </Drawer>
-          </>
-        ) : (
-          menuItems // Render the horizontal list for larger screens
-        )}
-        {/* Right Section - Search and Cart */}
-        <Box style={{ display: "flex", alignItems: "center", gap: "15px" }}>
-            {/* icon button */}
-            {user ? (
-          <>
-            <IconButton color="inherit" onClick={handleProfileClick}>
-              <AccountCircleIcon/>
-            </IconButton>
-            <IconButton color="inherit" onClick={handleCart}>
-                <Badge
-                  badgeContent= {cartDetail}
-                  color="error"
-                  anchorOrigin={{
-                    vertical: "top",
-                    horizontal: "right",
-                  }}
+                <Box
+                  role="presentation"
+                  onClick={toggleDrawer(false)}
+                  onKeyDown={toggleDrawer(false)}
+                  sx={{ width: 250, mt: 2 }}
                 >
-              <ShoppingCart></ShoppingCart>
-              </Badge>
-            </IconButton>
-            <Button color="inherit" onClick={handleLogout}>Đăng Xuất</Button>
-          </>
-        ) : (
-          <>
-          <Button color="inherit" onClick={() => navigate('/login')}>
-            Đăng Nhập
-          </Button>
-          <Button color="inherit" onClick={() => navigate('/register')}>
-          Đăng ký
-        </Button>
-        </>
-        )}
-             {/* icon button */}
-          
-        </Box>
-      </Toolbar>
-    </AppBar>
+                  <List>
+                    {[
+                      { text: "Trang chủ", to: "/" },
+                      { text: "Sản phẩm", to: "/categories" },
+                      { text: "Shops", to: "/shops" },
+                      { text: "About", to: "/about" }
+                    ].map((item) => (
+                      <ListItemButton key={item.text} component={Link} to={item.to}>
+                        <ListItemText primary={item.text} />
+                      </ListItemButton>
+                    ))}
+                  </List>
+                </Box>
+              </Drawer>
+            </>
+          ) : (
+            <Box>{menuItems}</Box>
+          )}
+
+          {/* Right Section - Profile, Cart, Auth */}
+          <Box display="flex" alignItems="center" gap="15px">
+            {user ? (
+              <>
+                <IconButton onClick={handleProfileClick} sx={{ color: "#ffffff" }}>
+                  <AccountCircleIcon />
+                </IconButton>
+                <IconButton onClick={handleCart} sx={{ color: "#ffffff" }}>
+                  <Badge
+                    badgeContent={cartDetail}
+                    color="error"
+                    anchorOrigin={{ vertical: "top", horizontal: "right" }}
+                  >
+                    <ShoppingCart />
+                  </Badge>
+                </IconButton>
+                <Button onClick={handleLogout} sx={{ color: "#ffffff", textTransform: "none", fontWeight: 600 }}>
+                  Đăng Xuất
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button onClick={() => navigate("/login")} sx={{ color: "#ffffff", textTransform: "none", fontWeight: 600 }}>
+                  Đăng Nhập
+                </Button>
+                <Button onClick={() => navigate("/register")} sx={{ color: "#ffffff", textTransform: "none", fontWeight: 600 }}>
+                  Đăng ký
+                </Button>
+              </>
+            )}
+          </Box>
+        </Toolbar>
+      </AppBar>
+    </ThemeProvider>
   );
 };
 
