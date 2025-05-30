@@ -1,113 +1,86 @@
-import { Box, Typography, Link, IconButton } from "@mui/material";
-import { Facebook, Instagram, YouTube } from "@mui/icons-material";
-import logo from "../../assets/logo.jpg";
+"use client"
+import React from "react";
+import {
+  Box,
+  Typography,
+  Link,
+  Container,
+  createTheme,
+  ThemeProvider,
+  IconButton
+} from "@mui/material";
+import FacebookIcon from '@mui/icons-material/Facebook';
+import YouTubeIcon from '@mui/icons-material/YouTube';
+import InstagramIcon from '@mui/icons-material/Instagram';
+import logo from "../../assets/logosecondhand.png"; // Đảm bảo đường dẫn chính xác
+
+const customTheme = createTheme({
+  palette: {
+    primary: { main: "#1E3A8A" },
+    secondary: { main: "#F59E42" },
+    background: { default: "#ffffff", paper: "#ffffff" },
+    text: { primary: "#ffffff" }
+  },
+  typography: {
+    fontFamily: "Roboto, sans-serif",
+    h6: { fontWeight: 700, fontSize: "1.25rem" }
+  }
+});
 
 const Footer = () => {
   return (
-    <Box
-      sx={{
-        // marginTop: "20px",
-        borderTop: "2px solid #e0e0e0",
-        backgroundColor: "#FBFAF1",
-        display: "flex",
-        flexDirection: "column",
-        paddingX: "20px",
-      }}
-    >
+    <ThemeProvider theme={customTheme}>
       <Box
         sx={{
-          paddingY: "10px",
-          justifyContent: "space-between",
-          display: "flex",
-          alignItems: "center",
-          flexWrap: "wrap",
+          background: "linear-gradient(90deg, #1E3A8A 0%, #F59E42 100%)",
+          py: 3,
         }}
       >
-        {/* Logo Section */}
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          <img src={logo} alt="Brand Logo" width="50" height="50" />
-          <Typography
-            variant="h5"
-            sx={{ fontWeight: "bold", marginLeft: "10px" }}
+        <Container maxWidth="lg">
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: { xs: "column", md: "row" },
+              justifyContent: "space-between",
+              alignItems: "center",
+              mb: 2,
+            }}
           >
-            SecondHand
+            {/* Logo và Tên thương hiệu giống NavBar */}
+            <Box display="flex" alignItems="center" gap={1}>
+              <img src={logo} alt="Brand Logo" style={{ height: "50px", borderRadius: "8px" }} />
+              <Typography variant="h6" sx={{ color: "#ffffff" }}>
+                SecondHand
+              </Typography>
+            </Box>
+            {/* Các liên kết thông tin */}
+            <Box sx={{ display: "flex", gap: 2 }}>
+              <Link href="#" underline="none" sx={{ color: "#ffffff", fontWeight: 500 }}>
+                Chính sách bảo mật
+              </Link>
+              <Link href="#" underline="none" sx={{ color: "#ffffff", fontWeight: 500 }}>
+                Điều khoản &amp; Điều kiện
+              </Link>
+            </Box>
+            {/* Các icon mạng xã hội */}
+            <Box sx={{ display: "flex", gap: 1 }}>
+              <IconButton href="https://www.facebook.com" target="_blank" sx={{ color: "#ffffff" }}>
+                <FacebookIcon />
+              </IconButton>
+              <IconButton href="https://www.youtube.com" target="_blank" sx={{ color: "#ffffff" }}>
+                <YouTubeIcon />
+              </IconButton>
+              <IconButton href="https://www.instagram.com" target="_blank" sx={{ color: "#ffffff" }}>
+                <InstagramIcon />
+              </IconButton>
+            </Box>
+          </Box>
+          <Typography variant="body2" align="center" sx={{ color: "#ffffff" }}>
+            ©2024 SecondHand. All rights reserved.
           </Typography>
-        </Box>
-
-        {/* Social Media Icons */}
-        <Box sx={{ display: "flex" }}>
-          <IconButton>
-            <YouTube
-              sx={{
-                fontSize: "40px",
-                color: "#333",
-                border: "2px solid #333",
-                aspectRatio: 1,
-                padding: "5px",
-                borderRadius: "50%",
-              }}
-            />
-          </IconButton>
-          <IconButton>
-            <Facebook
-              sx={{
-                fontSize: "40px",
-                color: "#333",
-                border: "2px solid #333",
-                aspectRatio: 1,
-                padding: "5px",
-                borderRadius: "50%",
-              }}
-            />
-          </IconButton>
-          <IconButton>
-            <Instagram
-              sx={{
-                fontSize: "40px",
-                color: "#333",
-                border: "2px solid #333",
-                aspectRatio: 1,
-                padding: "5px",
-                borderRadius: "50%",
-              }}
-            />
-          </IconButton>
-        </Box>
+        </Container>
       </Box>
-
-      {/* Footer Text */}
-      <Box
-        sx={{
-          paddingY: "10px",
-          justifyContent: "space-between",
-          display: "flex",
-          alignItems: "center",
-          flexWrap: "wrap",
-        }}
-      >
-        <Typography
-          sx={{
-            textAlign: "left",
-            color: "#333",
-            fontSize: "14px",
-          }}
-        >
-          ©2024. Tạo bởi <span style={{ color: "#FF6347" }}>❤️</span> 
-          Nhóm 5
-        </Typography>
-
-        {/* Privacy Policy and Terms */}
-        <Box>
-          <Link href="#" color="#333" underline="none">
-            Chính Sách Bảo Mật
-          </Link>{" "}
-          |{" "}
-          <Link href="#" color="#333" underline="none">
-            Điều khoản & Điều kiện
-          </Link>
-        </Box>
-      </Box>
-    </Box>
+    </ThemeProvider>
   );
 };
 

@@ -17,7 +17,7 @@ import {
   ThemeProvider
 } from "@mui/material";
 import { Search, ShoppingCart, Menu } from "@mui/icons-material";
-import logo from "../../assets/logo.jpg";
+import logo from "../../assets/logosecondhand.png";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../Auth/AuthContext";
