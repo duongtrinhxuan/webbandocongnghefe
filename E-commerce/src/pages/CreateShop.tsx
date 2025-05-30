@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {  useState } from "react";
 import { ShopDetails } from "../data/shopdetail";
 import { uploadToFirebase } from "./ChinhSuaSanPham";
 import { createShop } from "../services/shopService";

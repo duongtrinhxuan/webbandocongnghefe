@@ -1,4 +1,4 @@
-import React from "react";
+
 import {
   Box,
   Typography,
@@ -17,6 +17,7 @@ const dashboardNavTheme = createTheme({
   palette: {
     primary: { main: "#16a34a" },
     secondary: { main: "#F59E42" },
+    error: { main: "#ef4444" },
     background: { paper: "#ffffff" },
     text: { primary: "#ffffff" }
   },
@@ -94,6 +95,22 @@ export default function DashboardNav() {
               <ListItemText
                 primary="Thông tin cửa hàng"
                 primaryTypographyProps={{ fontWeight: 600, color: "#fff" }}
+              />
+            </ListItemButton>
+          </ListItem>
+          <ListItem disablePadding>
+            <ListItemButton
+              sx={{
+                borderRadius: 1,
+                backgroundColor: "#ef4444",
+                mt: 2,
+                "&:hover": { backgroundColor: "#dc2626" }
+              }}
+              onClick={() => navigate("/profile")}
+            >
+              <ListItemText
+                primary="Thoát"
+                primaryTypographyProps={{ fontWeight: 700, color: "#fff", textAlign: "center" }}
               />
             </ListItemButton>
           </ListItem>
