@@ -35,7 +35,12 @@ export default function DashboardNav() {
       <Box
         sx={{
           width: 260,
-          height: "100vh",
+          minHeight: "100dvh",
+          height: "100%",
+          position: "sticky", // Đổi từ fixed sang sticky
+          top: 0,
+          left: 0,
+          zIndex: 10, // Đặt zIndex nhỏ hơn Footer (footer nên có zIndex cao hơn nếu dùng position)
           backgroundColor: dashboardNavTheme.palette.primary.main,
           color: dashboardNavTheme.palette.text.primary,
           p: 3,
