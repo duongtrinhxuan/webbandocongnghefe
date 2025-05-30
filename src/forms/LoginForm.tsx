@@ -1,11 +1,12 @@
 "use client"
+import { useState } from "react";
 import { toast } from 'react-toastify';
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import BtnArrow from "@/svg/BtnArrow"
 import Link from "next/link"
-
+import { useRouter } from "next/navigation";
 interface FormData {
    email: string;
    password: string;
@@ -21,11 +22,37 @@ const LoginForm = () => {
       .required();
 
    const { register, handleSubmit, reset, formState: { errors }, } = useForm<FormData>({ resolver: yupResolver(schema), });
-   const onSubmit = () => {
-      const notify = () => toast('Login successfully', { position: 'top-center' });
-      notify();
-      reset();
-   };
+   const [loading, setLoading] = useState(false);
+   const router = useRouter();
+   const onSubmit = async (data: FormData) => {
+    setLoading(true);
+    try {
+      const response = await fetch("https://localhost:7183/User/Login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (response.ok) {
+        const result = await response.json();
+        localStorage.setItem("token", result.token);
+        toast("Đăng nhập thành công!", { position: "top-center" });
+        // Điều hướng theo role
+        if (result.user.role === "Admin") {
+          router.push("/admin");
+        } else {
+          router.push("/");
+        }
+        reset();
+      } else {
+        const errorData = await response.json();
+        toast(errorData.message || "Đăng nhập thất bại!", { type: "error", position: "top-center" });
+      }
+    } catch (error) {
+      toast("Đã xảy ra lỗi khi đăng nhập", { type: "error", position: "top-center" });
+    } finally {
+      setLoading(false);
+    }
+  };
 
    return (
       <form onSubmit={handleSubmit(onSubmit)} className="account__form">
