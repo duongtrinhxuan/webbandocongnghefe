@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import AdminNav from "../components/AdminNav";
 import { User } from "../data/User";
 import { editUser, getUser } from "../services/UserService";
-
+import { Box, Typography, Paper, Button, InputBase } from "@mui/material";
 export default function EditUser() {
   const [user, setUser] = useState<User>({
     id: "",
@@ -62,91 +62,152 @@ export default function EditUser() {
     }));
   };
   return (
-    <div className="flex w-full">
+     <Box className="flex w-screen">
       <AdminNav />
-      <div className="mt-10 ml-10 w-[75vw]">
-        <h1 className="font-bold text-2xl mb-3">Chỉnh sửa User</h1>
-        <form className="space-y-4 w-full md:w-1/2 max-w-lg border border-gray-300 p-4 md:p-8 rounded-lg shadow-md bg-white bg-opacity-40">
-          <div className="mb-4">
-            <label className="block mb-2 text-gray-800 font-medium">
-              Email
-            </label>
-            <input
-              type="text"
-              value={user?.email}
-              name="email"
-              onChange={handleChange}
-              className="px-4 py-2 border border-gray-300 w-full rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-700"
-            />
-          </div>
-
-          <div>
-            <label className="block mb-2 text-gray-800 font-medium">
-              Tên người dùng
-            </label>
-            <input
-              type="text"
-              value={user?.accountName}
-              name="accountName"
-              onChange={handleChange}
-              className="px-4 py-2 border border-gray-300 w-full rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-700"
-            />
-          </div>
-
-          <div>
-            <label className="block mb-2 text-gray-800 font-medium">
-              Ngày sinh
-            </label>
-            <input
-              type="date"
-              value={user.birthDate.toISOString().split("T")[0]}
-              name="birthDate"
-              onChange={handleChange}
-              className="px-4 py-2 border border-gray-300 w-full rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-700"
-            />
-          </div>
-
-          <div>
-            <label className="block mb-2 text-gray-800 font-medium">
-              Địa chỉ
-            </label>
-            <input
-              type="text"
-              value={user?.address}
-              name="address"
-              onChange={handleChange}
-              className="px-4 py-2 border border-gray-300 w-full rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-700"
-            />
-          </div>
-          <div>
-            <label className="block mb-2 text-gray-800 font-medium">
-              Số điện thoại
-            </label>
-            <input
-              type="text"
-              value={user?.phoneNumber}
-              name="phoneNumber"
-              onChange={handleChange}
-              className="px-4 py-2 border border-gray-300 w-full rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-700"
-            />
-          </div>
-        </form>
-        <div className="w-full">
-          <button
-            style={{ backgroundColor: "#1E3A8A" }}
-            className=" text-white px-6 py-2 rounded-md mt-10 ml-8"
-            onClick={edit}
-          >
-            Chỉnh sửa
-          </button>
-          <button
-            className="border bg-white text-black px-6 py-2 rounded-md mt-10 ml-12"
-            onClick={cancel}
-          >
-            Hủy bỏ
-          </button>
-        </div>
-      </div>
-    </div>
+      <Box flex={1} p={3}>
+        <Typography variant="h4" gutterBottom sx={{ color: "#1E3A8A" }}>
+          Chỉnh sửa User
+        </Typography>
+        <Paper
+          elevation={3}
+          sx={{
+            maxWidth: 500,
+            p: 4,
+            borderRadius: 3,
+            background: "#fff",
+            mt: 2,
+          }}
+        >
+          <Box display="flex" flexDirection="column" gap={2}>
+            <Box>
+              <Typography fontWeight={600} mb={1}>
+                Email
+              </Typography>
+              <InputBase
+                type="text"
+                value={user?.email}
+                name="email"
+                onChange={handleChange}
+                sx={{
+                  backgroundColor: "#F0ECE1",
+                  borderRadius: "8px",
+                  px: 2,
+                  py: 1,
+                  width: "100%",
+                  border: "1px solid #ccc",
+                }}
+              />
+            </Box>
+            <Box>
+              <Typography fontWeight={600} mb={1}>
+                Tên người dùng
+              </Typography>
+              <InputBase
+                type="text"
+                value={user?.accountName}
+                name="accountName"
+                onChange={handleChange}
+                sx={{
+                  backgroundColor: "#F0ECE1",
+                  borderRadius: "8px",
+                  px: 2,
+                  py: 1,
+                  width: "100%",
+                  border: "1px solid #ccc",
+                }}
+              />
+            </Box>
+            <Box>
+              <Typography fontWeight={600} mb={1}>
+                Ngày sinh
+              </Typography>
+              <InputBase
+                type="date"
+                value={user.birthDate.toISOString().split("T")[0]}
+                name="birthDate"
+                onChange={handleChange}
+                sx={{
+                  backgroundColor: "#F0ECE1",
+                  borderRadius: "8px",
+                  px: 2,
+                  py: 1,
+                  width: "100%",
+                  border: "1px solid #ccc",
+                }}
+              />
+            </Box>
+            <Box>
+              <Typography fontWeight={600} mb={1}>
+                Địa chỉ
+              </Typography>
+              <InputBase
+                type="text"
+                value={user?.address}
+                name="address"
+                onChange={handleChange}
+                sx={{
+                  backgroundColor: "#F0ECE1",
+                  borderRadius: "8px",
+                  px: 2,
+                  py: 1,
+                  width: "100%",
+                  border: "1px solid #ccc",
+                }}
+              />
+            </Box>
+            <Box>
+              <Typography fontWeight={600} mb={1}>
+                Số điện thoại
+              </Typography>
+              <InputBase
+                type="text"
+                value={user?.phoneNumber}
+                name="phoneNumber"
+                onChange={handleChange}
+                sx={{
+                  backgroundColor: "#F0ECE1",
+                  borderRadius: "8px",
+                  px: 2,
+                  py: 1,
+                  width: "100%",
+                  border: "1px solid #ccc",
+                }}
+              />
+            </Box>
+            <Box display="flex" gap={2} justifyContent="flex-end" mt={2}>
+              <Button
+                variant="contained"
+                sx={{
+                  backgroundColor: "#1E3A8A",
+                  color: "#fff",
+                  borderRadius: "8px",
+                  textTransform: "none",
+                  px: 4,
+                  "&:hover": { backgroundColor: "#155a9c" },
+                }}
+                onClick={edit}
+              >
+                Chỉnh sửa
+              </Button>
+              <Button
+                variant="outlined"
+                sx={{
+                  backgroundColor: "#fff",
+                  color: "#1E3A8A",
+                  border: "1px solid #1E3A8A",
+                  borderRadius: "8px",
+                  textTransform: "none",
+                  px: 4,
+                  "&:hover": { backgroundColor: "#F0ECE1" },
+                }}
+                onClick={cancel}
+              >
+                Hủy bỏ
+              </Button>
+            </Box>
+          </Box>
+        </Paper>
+      </Box>
+    </Box>
   );
 }
