@@ -1,5 +1,5 @@
 import { Search } from "@mui/icons-material";
-import { InputBase } from "@mui/material";
+import { InputBase, Box, Typography, Paper, Button, TableContainer, Table, TableHead, TableRow, TableCell, TableBody } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import AdminNav from "../components/AdminNav";
@@ -21,28 +21,23 @@ export default function AdminQuanLySP() {
     product.productName.toLowerCase().includes(searchTerm.toLowerCase())
   );
   const handleCheckboxChange = (id: string) => {
-    if (!id) return; // Nếu không có id, bỏ qua
-
+    if (!id) return;
     setSelectedProducts((prevSelected) => {
       const isSelected = prevSelected.includes(id);
-      const newSelected = isSelected
-        ? prevSelected.filter((productId) => productId !== id) // Bỏ chọn
-        : [...prevSelected, id]; // Thêm vào danh sách
-      return newSelected;
+      return isSelected
+        ? prevSelected.filter((productId) => productId !== id)
+        : [...prevSelected, id];
     });
   };
 
-  // Hàm xử lý khi chọn tất cả hoặc bỏ chọn tất cả
   const handleSelectAll = () => {
     const newSelected =
       selectedProducts.length === products.length
-        ? [] // Nếu đã chọn hết -> bỏ chọn tất cả
-        : products.map((product) => product.id); // Nếu chưa chọn hết -> chọn tất cả
-
+        ? []
+        : products.map((product) => product.id);
     setSelectedProducts(newSelected);
   };
 
-  //call api getListProduct và getListCategories
   const { id: shopId } = useParams();
   useEffect(() => {
     getListProduct(shopId as string).then((data) => {
@@ -72,114 +67,114 @@ export default function AdminQuanLySP() {
   };
 
   return (
-    <div className="flex w-screen space-x-6">
+    <Box className="flex w-screen">
       <AdminNav />
-      <div className="w-[75vw] px-6">
-        <div className="flex items-center justify-between mt-5 mb-7 w-[75vw] ">
-          <button
-            style={{ backgroundColor: "#FBFAF1" }}
-            onClick={back}
-            className="border  p-4 rounded-md"
+      <Box flex={1} p={3}>
+        <Box display="flex" flexDirection="column" gap={2} width="100%">
+          <Typography variant="h4" gutterBottom sx={{ color: "#1E3A8A" }}>
+            Quản Lý Sản Phẩm
+          </Typography>
+          {/* Thanh tìm kiếm và nút */}
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="space-between"
+            flexWrap="wrap"
           >
-            {"< Quay lại"}
-          </button>
-          <div className="flex items-center space-x-3 w-3/4">
             <InputBase
-              onChange={(e) => {
-                setSearchTerm(e.target.value);
-              }}
-              placeholder="Search"
-              startAdornment={<Search style={{ color: "#999" }} />}
-              style={{
+              placeholder="Tìm kiếm..."
+              onChange={(e) => setSearchTerm(e.target.value)}
+              startAdornment={<Search sx={{ color: "#999", mr: 1 }} />}
+              sx={{
                 backgroundColor: "#F0ECE1",
                 padding: "5px 10px",
                 borderRadius: "20px",
-                width: "500px",
+                width: "100%"
               }}
             />
-          </div>
-          <div className="space-x-4 mt-2">
-            <button
-              style={{ backgroundColor: "#FBFAF1" }}
-              onClick={handleDelete(selectedProducts)}
-              className="border  p-4 rounded-md"
+            <Box
+              display="flex"
+              gap={1}
+              justifyContent="flex-end"
+              mt={1}
+              width="100%"
             >
-              Xóa sản phẩm
-            </button>
-          </div>
-        </div>
-        <div>
-          <h2 className="text-xl font-bold mb-2 ">Danh sách sản phẩm</h2>
-          <div className="overflow-x-auto w-[75vw]">
-            <table className="min-w-full border border-gray-300">
-              <thead>
-                <tr style={{ backgroundColor: "#FBFAF1" }}>
-                  <th className="border border-gray-300 p-2">
+              <Button
+                onClick={back}
+                variant="outlined"
+                sx={{
+                  backgroundColor: "#FBFAF1",
+                  border: "1px solid #ccc",
+                  borderRadius: "8px",
+                  textTransform: "none"
+                }}
+              >
+                {"< Quay lại"}
+              </Button>
+              <Button
+                onClick={handleDelete(selectedProducts)}
+                variant="contained"
+                sx={{
+                  backgroundColor: "red",
+                  border: "1px solid red",
+                  borderRadius: "8px",
+                  textTransform: "none",
+                  "&:hover": { backgroundColor: "darkred" }
+                }}
+              >
+                Xóa sản phẩm
+              </Button>
+            </Box>
+          </Box>
+          {/* Bảng danh sách sản phẩm */}
+          <TableContainer component={Paper} sx={{ width: "100%", mt: 3 }}>
+            <Table>
+              <TableHead sx={{ backgroundColor: "#1E3A8A" }}>
+                <TableRow>
+                  <TableCell align="center" sx={{ color: "#ffffff", fontWeight: "bold" }}>
                     <input
                       type="checkbox"
-                      checked={selectedProducts.length === products.length}
+                      checked={selectedProducts.length === products.length && products.length > 0}
                       onChange={handleSelectAll}
                     />
-                  </th>
-                  <th className="border border-gray-300 p-2 text-left">
-                    Tên sản phẩm
-                  </th>
-                  <th className="border border-gray-300 p-2 text-left">
-                    Đơn giá
-                  </th>
-                  <th className="border border-gray-300 p-2 text-left">
-                    phân loại
-                  </th>
-                  <th className="border border-gray-300 p-2 text-left">
-                    Số lượng
-                  </th>
-                  <th className="border border-gray-300 p-2 text-left">
-                    Hình ảnh
-                  </th>
-                  <th className="border border-gray-300 p-2 text-left">
-                    Mô tả
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
+                  </TableCell>
+                  <TableCell sx={{ color: "#ffffff", fontWeight: "bold" }}>Tên sản phẩm</TableCell>
+                  <TableCell sx={{ color: "#ffffff", fontWeight: "bold" }}>Đơn giá</TableCell>
+                  <TableCell sx={{ color: "#ffffff", fontWeight: "bold" }}>Phân loại</TableCell>
+                  <TableCell sx={{ color: "#ffffff", fontWeight: "bold" }}>Số lượng</TableCell>
+                  <TableCell sx={{ color: "#ffffff", fontWeight: "bold" }}>Hình ảnh</TableCell>
+                  <TableCell sx={{ color: "#ffffff", fontWeight: "bold" }}>Mô tả</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
                 {filteredProducts.map((product) => (
-                  <tr key={product.id}>
-                    <td className="border border-gray-300 p-2 text-center">
+                  <TableRow key={product.id} hover>
+                    <TableCell align="center">
                       <input
                         type="checkbox"
                         checked={selectedProducts.includes(product.id)}
                         onChange={() => handleCheckboxChange(product.id)}
                       />
-                    </td>
-                    <td className="border border-gray-300 p-2">
-                      {product.productName}
-                    </td>
-                    <td className="border border-gray-300 p-2">
-                      {product.unitPrice} VNĐ
-                    </td>
-                    <td className="border border-gray-300 p-2">
-                      {getCategoryNamebyId(product.categoryId, categories)}
-                    </td>
-                    <td className="border border-gray-300 p-2">
-                      {product.quantity}
-                    </td>
-                    <td className="border border-gray-300 p-2">
+                    </TableCell>
+                    <TableCell>{product.productName}</TableCell>
+                    <TableCell>{product.unitPrice} VNĐ</TableCell>
+                    <TableCell>{getCategoryNamebyId(product.categoryId, categories)}</TableCell>
+                    <TableCell>{product.quantity}</TableCell>
+                    <TableCell>
                       <img
                         src={product.image}
                         alt={product.productName}
-                        className="w-20 h-20 object-contain"
+                        style={{ width: 80, height: 80, objectFit: "contain", borderRadius: 8 }}
                       />
-                    </td>
-                    <td className="border border-gray-300 p-2">
-                      {product.description}
-                    </td>
-                  </tr>
+                    </TableCell>
+                    <TableCell>{product.description}</TableCell>
+                  </TableRow>
                 ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Box>
+      </Box>
+    </Box>
   );
 }

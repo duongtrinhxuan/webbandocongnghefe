@@ -1,149 +1,180 @@
-import React, { useEffect, useState } from "react";
+import { Search } from "@mui/icons-material";
+import { InputBase, Box, Typography, Paper, Button, TableContainer, Table, TableHead, TableRow, TableCell, TableBody } from "@mui/material";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import AdminNav from "../components/AdminNav";
-import { ShopDetails } from "../data/shopdetail";
-import { uploadToFirebase } from "./ChinhSuaSanPham";
-import { User } from "../data/User";
-import { getListUsers } from "../services/UserService";
-import { createShop } from "../services/shopService";
-import { useNavigate } from "react-router-dom";
+import { Product } from "../data/productdetail";
+import { getListCategories } from "../services/categoryService";
+import {
+    deleteProduct,
+    getListProduct,
+} from "../services/productDetailService";
+import { Category, getCategoryNamebyId } from "./ChinhSuaSanPham";
 
-export default function CreateShop() {
-  const [shop, setShop] = useState<ShopDetails>({
-    id: "",
-    userId: "",
-    userName: "",
-    name: "",
-    address: "",
-    image: "",
-    rating: 0,
-  });
-  const [users, setUsers] = useState<User[]>([]);
-  //call api getListUsers
+export default function AdminQuanLySP() {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
+
+  const filteredProducts = products.filter((product) =>
+    product.productName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+  const handleCheckboxChange = (id: string) => {
+    if (!id) return;
+    setSelectedProducts((prevSelected) => {
+      const isSelected = prevSelected.includes(id);
+      return isSelected
+        ? prevSelected.filter((productId) => productId !== id)
+        : [...prevSelected, id];
+    });
+  };
+
+  const handleSelectAll = () => {
+    const newSelected =
+      selectedProducts.length === products.length
+        ? []
+        : products.map((product) => product.id);
+    setSelectedProducts(newSelected);
+  };
+
+  const { id: shopId } = useParams();
   useEffect(() => {
-    getListUsers().then((data) => {
-      const transformedUsers = data.map((item: any) => ({
-        id: item.id,
-        AccountName: item.accountname,
-        BirthDate: new Date(item.birthdate),
-        Address: item.address,
-        Email: item.email,
-        Password: "",
-        Role: item.role[0],
-        PhoneNumber:item.phoneNumber
-      }));
-      setUsers(transformedUsers);
+    getListProduct(shopId as string).then((data) => {
+      setProducts(data);
+    });
+    getListCategories().then((data) => {
+      setCategories(data);
     });
   }, []);
-  const nav=useNavigate()
-  const findUserIdByEmail = (email: string): string | undefined => {
-    const user = users.find((u) => u.Email === email);
-    return user ? user.id : undefined; // Trả về ID nếu tìm thấy, undefined nếu không
-  };
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setShop((prev) => {
-      if (name === "userName") {
-        const userId = findUserIdByEmail(value); // Tìm ID từ email
-        return {
-          ...prev,
-          userName: value,
-          userId: userId || "", // Cập nhật userId nếu tìm thấy
-        };
-      }
-      return {
-        ...prev,
-        [name]: value,
-      };
-    });
-  };
-  const handleFileChange = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const url = await uploadToFirebase(file);
-      setShop((prev) => ({ ...prev, image: url })); // Cập nhật URL ảnh vào productData
-    }
-  };
-  //call api createShop
-  const create =()=>{
-    const isEmptyField = Object.entries(shop).some(([key, value]) => {
-      if ( key === "rating"|| key === "id") return false;
-      return value === "";
-    });
 
-    if (isEmptyField) {
-      alert("Vui lòng điền đầy đủ thông tin!");
-      return;
-    }
-    createShop(shop).then(()=>{
-        nav("/admin/QuanLyShop")
-    })
-  }
+  const navigation = useNavigate();
+  const back = () => {
+    navigation("/admin/QuanLyShop");
+  };
+
+  const handleDelete = (selectedProducts: string[]) => () => {
+    selectedProducts.forEach((selectedProduct) => {
+      deleteProduct(selectedProduct).then(() => {
+        setProducts((prevProducts) =>
+          prevProducts.filter((product) => product.id !== selectedProduct)
+        );
+        setSelectedProducts((prevSelected) =>
+          prevSelected.filter((id) => id !== selectedProduct)
+        );
+      });
+    });
+  };
+
   return (
-    <div className="flex w-full">
+    <Box className="flex w-screen">
       <AdminNav />
-      <div className="mt-10 ml-10 w-[75vw]">
-        <h1 className="font-bold text-2xl mb-3">Thêm Shop</h1>
-        <form className="space-y-4 w-full md:w-1/2 max-w-lg border border-gray-300 p-4 md:p-8 rounded-lg shadow-md bg-white bg-opacity-40">
-          <div className="mb-4">
-            <label className="block mb-2 text-gray-800 font-medium">
-              Ảnh minh họa
-            </label>
-            <input type="file" onChange={handleFileChange} />
-          </div>
-          <div className="mb-4">
-            <label className="block mb-2 text-gray-800 font-medium">
-              Email
-            </label>
-            <input
-              type="text"
-              value={shop.userName}
-              name="userName"
-              onChange={handleChange}
-              className="px-4 py-2 border border-gray-300 w-full rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-700"
-            />
-          </div>
-
-          <div>
-            <label className="block mb-2 text-gray-800 font-medium">
-              Tên Shop
-            </label>
-            <input
-              type="text"
-              value={shop.name}
-              name="name"
-              onChange={handleChange}
-              className="px-4 py-2 border border-gray-300 w-full rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-700"
-            />
-          </div>
-
-          <div>
-            <label className="block mb-2 text-gray-800 font-medium">
-              Địa chỉ
-            </label>
-            <input
-              type="text"
-              value={shop.address}
-              name="address"
-              onChange={handleChange}
-              className="px-4 py-2 border border-gray-300 w-full rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-700"
-            />
-          </div>
-        </form>
-        <div className="w-full">
-          <button
-            style={{ backgroundColor: "#1E3A8A" }}
-            className=" text-white px-6 py-2 rounded-md mt-10 ml-8"
-            onClick={create}
+      <Box flex={1} p={3}>
+        <Box display="flex" flexDirection="column" gap={2} width="100%">
+          <Typography variant="h4" gutterBottom sx={{ color: "#1E3A8A" }}>
+            Quản Lý Sản Phẩm
+          </Typography>
+          {/* Thanh tìm kiếm và nút */}
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="space-between"
+            flexWrap="wrap"
           >
-            Thêm Shop
-          </button>
-          <button className="border bg-white text-black px-6 py-2 rounded-md mt-10 ml-12">
-            Hủy bỏ
-          </button>
-        </div>
-      </div>
-    </div>
+            <InputBase
+              placeholder="Tìm kiếm..."
+              onChange={(e) => setSearchTerm(e.target.value)}
+              startAdornment={<Search sx={{ color: "#999", mr: 1 }} />}
+              sx={{
+                backgroundColor: "#F0ECE1",
+                padding: "5px 10px",
+                borderRadius: "20px",
+                width: "100%"
+              }}
+            />
+            <Box
+              display="flex"
+              gap={1}
+              justifyContent="flex-end"
+              mt={1}
+              width="100%"
+            >
+              <Button
+                onClick={back}
+                variant="outlined"
+                sx={{
+                  backgroundColor: "#FBFAF1",
+                  border: "1px solid #ccc",
+                  borderRadius: "8px",
+                  textTransform: "none"
+                }}
+              >
+                {"< Quay lại"}
+              </Button>
+              <Button
+                onClick={handleDelete(selectedProducts)}
+                variant="contained"
+                sx={{
+                  backgroundColor: "red",
+                  border: "1px solid red",
+                  borderRadius: "8px",
+                  textTransform: "none",
+                  "&:hover": { backgroundColor: "darkred" }
+                }}
+              >
+                Xóa sản phẩm
+              </Button>
+            </Box>
+          </Box>
+          {/* Bảng danh sách sản phẩm */}
+          <TableContainer component={Paper} sx={{ width: "100%", mt: 3 }}>
+            <Table>
+              <TableHead sx={{ backgroundColor: "#1E3A8A" }}>
+                <TableRow>
+                  <TableCell align="center" sx={{ color: "#ffffff", fontWeight: "bold" }}>
+                    <input
+                      type="checkbox"
+                      checked={selectedProducts.length === products.length && products.length > 0}
+                      onChange={handleSelectAll}
+                    />
+                  </TableCell>
+                  <TableCell sx={{ color: "#ffffff", fontWeight: "bold" }}>Tên sản phẩm</TableCell>
+                  <TableCell sx={{ color: "#ffffff", fontWeight: "bold" }}>Đơn giá</TableCell>
+                  <TableCell sx={{ color: "#ffffff", fontWeight: "bold" }}>Phân loại</TableCell>
+                  <TableCell sx={{ color: "#ffffff", fontWeight: "bold" }}>Số lượng</TableCell>
+                  <TableCell sx={{ color: "#ffffff", fontWeight: "bold" }}>Hình ảnh</TableCell>
+                  <TableCell sx={{ color: "#ffffff", fontWeight: "bold" }}>Mô tả</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {filteredProducts.map((product) => (
+                  <TableRow key={product.id} hover>
+                    <TableCell align="center">
+                      <input
+                        type="checkbox"
+                        checked={selectedProducts.includes(product.id)}
+                        onChange={() => handleCheckboxChange(product.id)}
+                      />
+                    </TableCell>
+                    <TableCell>{product.productName}</TableCell>
+                    <TableCell>{product.unitPrice} VNĐ</TableCell>
+                    <TableCell>{getCategoryNamebyId(product.categoryId, categories)}</TableCell>
+                    <TableCell>{product.quantity}</TableCell>
+                    <TableCell>
+                      <img
+                        src={product.image}
+                        alt={product.productName}
+                        style={{ width: 80, height: 80, objectFit: "contain", borderRadius: 8 }}
+                      />
+                    </TableCell>
+                    <TableCell>{product.description}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Box>
+      </Box>
+    </Box>
   );
 }
