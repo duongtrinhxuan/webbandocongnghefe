@@ -1,6 +1,6 @@
-// import { Product } from '../../data/productdetail';
 import { useNavigate } from 'react-router-dom';
 import { OrderUser } from '../../data/order';
+import { Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button } from "@mui/material";
 
 export interface Product {
     id: string;
@@ -23,57 +23,63 @@ interface OrderListProps {
   orders: OrderUser[];
 }
 
+export default function OrderList({ orders }: OrderListProps) {
+  const navigate = useNavigate();
 
-export default function OrderList({orders}:OrderListProps) {
-    const navigate = useNavigate();
+  const handleViewDetail = (orderId: string) => {
+    navigate(`/chitiet/${orderId}`);
+  };
 
-    const handleViewDetail = (orderId: string) => {
-        navigate(`/chitiet/${orderId}`);
-    };
-
-    const handleDeleteOrder = (orderId: string) => {
-      const confirmed = window.confirm("Bạn có chắc chắn muốn xóa đơn hàng này?");
-      if (confirmed) {
-        // Perform the delete operation here (e.g., call an API to delete the order)
-        console.log(`Order with ID ${orderId} deleted`);
-        // Optionally, remove the order from the displayed list
-      }
-    };
-    return (
-    <div className="overflow-x-auto w-[75vw]">
-      <h2 className="text-xl font-bold mb-2 ">Danh sách Đơn hàng</h2>
-      <table className="min-w-full border-gray-300 bg-white ">
-        <thead>
-          <tr style={{backgroundColor:"#FBFAF1"}} className="text-left ">
-            <th className="border border-gray-300 py-2 px-4 border-b">Mã đơn hàng</th>
-            <th className="border border-gray-300 py-2 px-4 border-b">Shop</th>
-            <th className="border border-gray-300 py-2 px-4 border-b">Tổng tiền</th>
-            <th className="border border-gray-300 py-2 px-2 border-b">Ngày tạo</th>
-            <th className="border border-gray-300 py-2 px-2 border-b">Xem chi tiết</th>
-          </tr>
-        </thead>
-        <tbody>
+  return (
+    <TableContainer component={Paper} sx={{ borderRadius: 3, boxShadow: 2, mt: 2 }}>
+      <Typography variant="h6" sx={{ fontWeight: 700, color: "#1E3A8A", p: 2 }}>
+        Danh sách Đơn hàng
+      </Typography>
+      <Table>
+        <TableHead>
+          <TableRow sx={{ backgroundColor: "#FBFAF1" }}>
+            <TableCell sx={{ fontWeight: "bold" }}>Mã đơn hàng</TableCell>
+            <TableCell sx={{ fontWeight: "bold" }}>Shop</TableCell>
+            <TableCell sx={{ fontWeight: "bold" }}>Tổng tiền</TableCell>
+            <TableCell sx={{ fontWeight: "bold" }}>Ngày tạo</TableCell>
+            <TableCell sx={{ fontWeight: "bold" }}>Xem chi tiết</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
           {orders.map((order) => (
-            <tr key={order.id}>
-              <td className="border border-gray-300 py-2 px-4 border-b">{order.id}</td>
-              <td className="border border-gray-300 py-2 px-4 border-b">{order.shopName}</td>
-              <td className="border border-gray-300 py-2 px-4 border-b">{order.totalAmount?.toLocaleString('vi-VN')} VND</td>
-              <td className="border border-gray-300 py-2 px-4 border-b"> {order.date ? new Date(order.date).toLocaleDateString() : 'N/A'}</td>
-                <td className="border border-gray-300 py-2 px-4 border-b">
-                <div className="flex space-x-2">
-                                <button
-                                     onClick={() => handleViewDetail(order.id)}
-                                    className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-1 px-3 rounded"
-                                >
-                                    Xem chi tiết
-                                </button>
-                      
-                                </div>
-                            </td>
-            </tr>
+            <TableRow key={order.id} hover>
+              <TableCell>{order.id}</TableCell>
+              <TableCell>{order.shopName}</TableCell>
+              <TableCell>{order.totalAmount?.toLocaleString('vi-VN')} VND</TableCell>
+              <TableCell>{order.date ? new Date(order.date).toLocaleDateString() : 'N/A'}</TableCell>
+              <TableCell>
+                <Button
+                  onClick={() => handleViewDetail(order.id)}
+                  variant="contained"
+                  sx={{
+                    backgroundColor: "#1E3A8A",
+                    color: "#fff",
+                    borderRadius: "8px",
+                    textTransform: "none",
+                    px: 2,
+                    fontWeight: 600,
+                    "&:hover": { backgroundColor: "#155a9c" },
+                  }}
+                >
+                  Xem chi tiết
+                </Button>
+              </TableCell>
+            </TableRow>
           ))}
-        </tbody>
-      </table>
-    </div>
+          {orders.length === 0 && (
+            <TableRow>
+              <TableCell colSpan={5} align="center" sx={{ color: "#888" }}>
+                Không có đơn hàng nào.
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+    </TableContainer>
   );
 }
