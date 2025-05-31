@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import { Box, Divider, Pagination } from "@mui/material";
+import { Box, Divider, Pagination, Paper } from "@mui/material";
 import ReviewItem from "./ReviewItem";
 
 interface Props {
   reviews: Array<{
     id: string;
-    content:string;
-    username:string;
+    content: string;
+    username: string;
     productId: string;
     rating: number;
     date: Date;
@@ -26,7 +26,15 @@ const ReviewList = ({ reviews }: Props) => {
   const endIndex = startIndex + REVIEWS_PER_PAGE;
 
   return (
-    <Box>
+    <Paper
+      elevation={3}
+      sx={{
+        borderRadius: 3,
+        p: 3,
+        background: "#fff",
+        boxShadow: "0 4px 16px rgba(30,58,138,0.08)",
+      }}
+    >
       {reviews.slice(startIndex, endIndex).map((review, index) => (
         <React.Fragment key={index}>
           <ReviewItem {...review} />
@@ -45,9 +53,21 @@ const ReviewList = ({ reviews }: Props) => {
           page={currentPage}
           onChange={handlePageChange}
           color="primary"
+          sx={{
+            "& .MuiPaginationItem-root": {
+              borderRadius: 2,
+              fontWeight: 600,
+              color: "#1E3A8A",
+              borderColor: "#1E3A8A",
+            },
+            "& .Mui-selected": {
+              background: "#F59E42",
+              color: "#fff",
+            },
+          }}
         />
       </Box>
-    </Box>
+    </Paper>
   );
 };
 

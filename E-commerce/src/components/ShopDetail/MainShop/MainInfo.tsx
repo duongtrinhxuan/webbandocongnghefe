@@ -2,14 +2,10 @@ import { useState } from "react";
 import {
   Box,
   Typography,
-  Button,
   Divider,
-  Stack,
   Rating,
   createTheme,
   ThemeProvider,
-  TextField,
-  ButtonGroup,
   Paper,
 } from "@mui/material";
 import { Shop } from "../../../data/shop";
@@ -19,7 +15,6 @@ interface Props {
 }
 
 const MainInfo = ({ shop }: Props) => {
-
   const theme = createTheme({
     typography: {
       fontFamily: "Nunito",
@@ -29,19 +24,38 @@ const MainInfo = ({ shop }: Props) => {
   return (
     <ThemeProvider theme={theme}>
       <Box width="100%">
-        {/* Product Details */}
-        <Paper sx={{ bgcolor: "#76A188", display: "inline-block" }}>
+        {/* Shop Tag */}
+        <Paper
+          sx={{
+            bgcolor: "#1E3A8A",
+            display: "inline-block",
+            mb: 2,
+            px: 2,
+            py: 0.5,
+            borderRadius: 2,
+            boxShadow: "0 2px 8px rgba(30,58,138,0.08)",
+          }}
+        >
           <Typography
-            p={0.5}
             variant="subtitle1"
-            color="white"
-            fontWeight={600}
+            color="#fff"
+            fontWeight={700}
+            sx={{ letterSpacing: 1 }}
           >
-            Shop
+            SHOP
           </Typography>
         </Paper>
+        {/* Shop Name & Status */}
         <Box display="flex" justifyContent="space-between" alignItems="center">
-          <Typography sx={{ fontWeight: "700", fontSize: "40px", mt: 1 }}>
+          <Typography
+            sx={{
+              fontWeight: "800",
+              fontSize: { xs: "2rem", md: "2.5rem" },
+              mt: 1,
+              color: "#1E3A8A",
+              letterSpacing: 1,
+            }}
+          >
             {shop.name}
           </Typography>
           <Box display="flex" alignItems="center">
@@ -50,70 +64,43 @@ const MainInfo = ({ shop }: Props) => {
                 width: 15,
                 height: 15,
                 borderRadius: "50%",
-                bgcolor: 5 > 0 ? "#2196F3" : "#D32F2F",
+                bgcolor: "#2196F3",
                 mr: 1,
               }}
             />
           </Box>
         </Box>
-        <Box display="flex" gap={1} alignItems="center">
+        {/* Rating */}
+        <Box display="flex" gap={1} alignItems="center" mt={1}>
           <Rating
             value={shop.rating}
             readOnly
             precision={0.5}
             size="medium"
+            sx={{
+              "& .MuiRating-iconFilled": { color: "#F59E42" },
+              "& .MuiRating-iconEmpty": { color: "#F0ECE1" },
+            }}
           />
-          <Typography fontWeight="bold" fontSize="18px">
+          <Typography fontWeight="bold" fontSize="18px" color="#1E3A8A">
             ({shop.rating})
           </Typography>
           <Typography fontWeight="500" fontSize="16px" color="#C45C00">
             Đánh giá
           </Typography>
         </Box>
-        <Typography variant="h4" color="textPrimary" fontWeight="600" my={3}>
-          Địa chỉ: {shop.address}{" "}
+        {/* Address */}
+        <Typography
+          variant="h5"
+          color="#E600A0"
+          fontWeight="700"
+          my={3}
+          sx={{ letterSpacing: 1 }}
+        >
+          Địa chỉ: {shop.address}
         </Typography>
-
-        {/* Description */}
-        {/* <Typography variant="h6" fontWeight="700" mb={1}>
-          DESCRIPTION
-        </Typography>
-        <Typography variant="body1" color="textPrimary" mb={2}>
-         Shop được sỡ hữu bởi {shop.userName}
-        </Typography> */}
-
         <Divider sx={{ my: 3 }} />
-
-       
-          {/* Option Section */}
-          {/* <Box>
-            <Typography variant="h6" fontWeight="700">
-              OPTION
-            </Typography>
-            <ButtonGroup variant="outlined" sx={{ mt: 1 }}>
-              <Button
-                variant={Option === "With Pump" ? "contained" : "outlined"}
-                onClick={() => setOption("With Pump")}
-              >
-                With Pump
-              </Button>
-              <Button
-                variant={Option === "No Pump" ? "contained" : "outlined"}
-                onClick={() => setOption("No Pump")}
-              >
-                No Pump
-              </Button>
-            </ButtonGroup>
-          </Box> */}
-
-          {/* Quantity Section */}
-         
-          </Box>
-        
-
-        {/* Action Buttons */}
-       
-      
+      </Box>
     </ThemeProvider>
   );
 };

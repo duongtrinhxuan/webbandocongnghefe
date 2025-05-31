@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { Box, Button, Typography, Rating, IconButton, Menu, MenuItem, TextField } from "@mui/material";
+import { Box, Button, Typography, Rating, IconButton, Menu, MenuItem, TextField, Paper } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import { useAuth } from "../../Auth/AuthContext"; // Import AuthContext từ vị trí của bạn
-import {editComment,deleteComment} from "../../../services/reviewService"
+import { useAuth } from "../../Auth/AuthContext";
+import { editComment, deleteComment } from "../../../services/reviewService";
 import { CommentDTO } from "../../../data/comment";
 interface Props {
   id: string;
@@ -10,41 +10,39 @@ interface Props {
   username: string;
   productId: string;
   rating: number;
-  date: Date | string; // Allowing both Date and string types
+  date: Date | string;
 }
 
-const ReviewItem = ({ id, username,productId, rating, date, content }: Props) => {
+const ReviewItem = ({ id, username, productId, rating, date, content }: Props) => {
   const { user } = useAuth();
-  // Ensure date is a valid Date object
-  
   const validDate = date instanceof Date ? date : new Date(date);
-  // State for menu
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const isMenuOpen = Boolean(anchorEl);
-  const [comment, setComment]=useState<CommentDTO>({
+  const [comment, setComment] = useState<CommentDTO>({
     id: "",
     content: "",
-    userId:"",
+    userId: "",
     productId: "",
     rating: 0,
-    date: new Date
-  })
+    date: new Date(),
+  });
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(content);
   const [editedRating, setEditedRating] = useState(rating);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const isMenuOpen = Boolean(anchorEl);
+
   const handleSave = () => {
     const updatedComment: CommentDTO = {
-      id, // Sử dụng id từ props
+      id,
       content: editedContent,
-      userId: user?.id || "", // Lấy từ AuthContext hoặc props
-      productId, // Sử dụng productId từ props
+      userId: user?.id || "",
+      productId,
       rating: editedRating,
-      date: new Date(), // Lấy ngày hiện tại hoặc từ input nếu có
+      date: new Date(),
     };
-    setComment(updatedComment); // Cập nhật state (nếu cần)
+    setComment(updatedComment);
     editComment(updatedComment).then(() => {
-      window.location.reload(); // Tải lại toàn bộ trang
-    });; // Gọi hàm service để lưu thay đổi
+      window.location.reload();
+    });
     setIsEditing(false);
   };
 
@@ -53,7 +51,7 @@ const ReviewItem = ({ id, username,productId, rating, date, content }: Props) =>
     setEditedRating(rating);
     setIsEditing(false);
   };
-  // Menu handlers
+
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -61,25 +59,36 @@ const ReviewItem = ({ id, username,productId, rating, date, content }: Props) =>
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
+
   return (
-    <Box mb={3}>
-      <Box display="flex" justifyContent="space-between">
-      <Typography
+    <Paper
+      elevation={1}
+      sx={{
+        borderRadius: 2,
+        p: 2,
+        mb: 2,
+        background: "#F9FAFB",
+        boxShadow: "0 2px 8px rgba(30,58,138,0.04)",
+      }}
+    >
+      <Box display="flex" justifyContent="space-between" alignItems="center">
+        <Typography
           fontWeight="bold"
           sx={{
-            color: user?.accountName === username ? "primary.main" : "inherit",
+            color: user?.accountName === username ? "#1E3A8A" : "inherit",
+            fontSize: 18,
           }}
         >
           {username}
         </Typography>
-        <Typography color="textSecondary">
+        <Typography color="textSecondary" fontSize={14}>
           {isNaN(validDate.getTime()) ? "No date available" : validDate.toLocaleDateString()}
         </Typography>
         {user?.accountName === username && (
-            <IconButton size="small" onClick={handleMenuOpen}>
-              <MoreVertIcon />
-            </IconButton>
-          )}
+          <IconButton size="small" onClick={handleMenuOpen}>
+            <MoreVertIcon />
+          </IconButton>
+        )}
       </Box>
       {isEditing ? (
         <Box mt={2}>
@@ -91,6 +100,10 @@ const ReviewItem = ({ id, username,productId, rating, date, content }: Props) =>
             placeholder="Edit your review"
             multiline
             rows={3}
+            sx={{
+              background: "#fff",
+              borderRadius: 2,
+            }}
           />
           <Rating
             value={editedRating}
@@ -99,19 +112,19 @@ const ReviewItem = ({ id, username,productId, rating, date, content }: Props) =>
             sx={{
               mt: 2,
               "& .MuiRating-iconFilled": {
-                color: "black",
+                color: "#1E3A8A",
               },
               "& .MuiRating-iconEmpty": {
-                color: "black",
+                color: "#F0ECE1",
               },
             }}
           />
           <Box mt={2} display="flex" gap={1}>
-            <Button variant="contained" color="primary" onClick={handleSave}>
-              Save
+            <Button variant="contained" color="primary" onClick={handleSave} sx={{ borderRadius: 2 }}>
+              Lưu
             </Button>
-            <Button variant="outlined" onClick={handleCancel}>
-              Cancel
+            <Button variant="outlined" onClick={handleCancel} sx={{ borderRadius: 2 }}>
+              Hủy
             </Button>
           </Box>
         </Box>
@@ -123,25 +136,26 @@ const ReviewItem = ({ id, username,productId, rating, date, content }: Props) =>
             size="small"
             sx={{
               "& .MuiRating-iconFilled": {
-                color: "black",
+                color: "#1E3A8A",
               },
               "& .MuiRating-iconEmpty": {
-                color: "black",
+                color: "#F0ECE1",
               },
             }}
           />
-          <Typography sx={{ mt: 1 }}>{content}</Typography>
+          <Typography sx={{ mt: 1, fontSize: 16 }}>{content}</Typography>
         </>
       )}
-    
-    {/* Menu for Edit/Delete */}
-    <Menu
+
+      {/* Menu for Edit/Delete */}
+      <Menu
         anchorEl={anchorEl}
         open={isMenuOpen}
         onClose={handleMenuClose}
         PaperProps={{
           style: {
             minWidth: "120px",
+            borderRadius: 8,
           },
         }}
       >
@@ -151,20 +165,20 @@ const ReviewItem = ({ id, username,productId, rating, date, content }: Props) =>
             setIsEditing(true);
           }}
         >
-          Edit
+          Sửa
         </MenuItem>
         <MenuItem
           onClick={() => {
             handleMenuClose();
             deleteComment(id).then(() => {
-              window.location.reload(); // Tải lại toàn bộ trang
-            });;
+              window.location.reload();
+            });
           }}
         >
-          Delete
+          Xóa
         </MenuItem>
       </Menu>
-    </Box>
+    </Paper>
   );
 };
 
