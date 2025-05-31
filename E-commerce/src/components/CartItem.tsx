@@ -1,109 +1,155 @@
 import { ProductCart } from "../data/Cart";
 import { useState } from "react";
+import { Box, Typography, IconButton, Button, Paper, TextField } from "@mui/material";
+import RemoveIcon from "@mui/icons-material/Remove";
+import AddIcon from "@mui/icons-material/Add";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 
 interface CartItemProps {
   ProductCart: ProductCart;
-  onQuantityChange: (productId: string, newQuantity: number) => void; // Callback để thông báo thay đổi
-  DeleteCartItem:(id:string)=>void
+  onQuantityChange: (productId: string, newQuantity: number) => void;
+  DeleteCartItem: (id: string) => void;
 }
 
-export default function CartItem({ ProductCart, onQuantityChange,DeleteCartItem }: CartItemProps) {
+export default function CartItem({ ProductCart, onQuantityChange, DeleteCartItem }: CartItemProps) {
   const [quantity, setQuantity] = useState(ProductCart.quantity);
 
   const handleIncrease = () => {
-    let newQuantity=0;
-    if(quantity<ProductCart.productInfo.quantity)
-    {
-      newQuantity=quantity+1;
-    }
-    else
-    {
-      newQuantity=ProductCart.productInfo.quantity
-      alert("số lượng sản phẩm còn lại không đủ!!!!")
+    let newQuantity = 0;
+    if (quantity < ProductCart.productInfo.quantity) {
+      newQuantity = quantity + 1;
+    } else {
+      newQuantity = ProductCart.productInfo.quantity;
+      alert("Số lượng sản phẩm còn lại không đủ!");
     }
     setQuantity(newQuantity);
     onQuantityChange(ProductCart.idProduct, newQuantity);
   };
 
   const handleDecrease = () => {
-    const newQuantity = quantity > 1 ? quantity - 1 : 1; // Không cho giảm dưới 1
+    const newQuantity = quantity > 1 ? quantity - 1 : 1;
     setQuantity(newQuantity);
     onQuantityChange(ProductCart.idProduct, newQuantity);
   };
 
-
-
   return (
-    <div
-      style={{ backgroundColor: "#FBFAF1" }}
-      className="rounded-lg border bg-white p-4 shadow-sm dark:border-gray-700 md:p-6 mt-3"
+    <Paper
+      elevation={2}
+      sx={{
+        borderRadius: 3,
+        p: { xs: 2, md: 3 },
+        background: "#FBFAF1",
+        boxShadow: "0 2px 8px rgba(30,58,138,0.04)",
+        mb: 1,
+      }}
     >
-      <div className="flex flex-wrap items-center justify-between gap-4 md:flex-nowrap">
+      <Box
+        display="flex"
+        flexWrap="wrap"
+        alignItems="center"
+        justifyContent="space-between"
+        gap={2}
+      >
         {/* Image */}
-        <img
-          className="w-20 h-20 object-contain"
+        <Box
+          component="img"
           src={ProductCart.productInfo.image}
           alt={ProductCart.productInfo.productName}
+          sx={{
+            width: 70,
+            height: 70,
+            objectFit: "cover",
+            borderRadius: 2,
+            border: "1px solid #F0ECE1",
+            background: "#fff",
+            mr: 2,
+          }}
         />
 
         {/* Item Details */}
-        <div className="flex-1">
-          <p className="text-base font-bold text-gray-900">
+        <Box flex={1} minWidth={120}>
+          <Typography fontWeight={700} fontSize={17} color="#1E3A8A" noWrap>
             {ProductCart.productInfo.productName}
-          </p>
-          <button
-            type="button"
-            className="mt-2 text-sm font-medium text-red-600 hover:underline dark:text-red-500"
-            onClick={()=>DeleteCartItem(ProductCart.id)}
+          </Typography>
+          <Button
+            size="small"
+            startIcon={<DeleteOutlineIcon />}
+            sx={{
+              mt: 1,
+              color: "#D32F2F",
+              fontWeight: 600,
+              textTransform: "none",
+              "&:hover": { textDecoration: "underline", bgcolor: "#FFF0F0" },
+            }}
+            onClick={() => DeleteCartItem(ProductCart.id)}
           >
             Xóa
-          </button>
-        </div>
+          </Button>
+        </Box>
 
         {/* Quantity Controller and Price */}
-        <div className="flex items-center gap-3">
+        <Box display="flex" alignItems="center" gap={2}>
           {/* Quantity Controller */}
-          <div className="flex items-center gap-2">
-            <button
-              className="h-6 w-6 flex items-center justify-center rounded border bg-green hover:bg-red-700"
+          <Box display="flex" alignItems="center" gap={1}>
+            <IconButton
+              size="small"
               onClick={handleDecrease}
+              sx={{
+                border: "1px solid #F0ECE1",
+                bgcolor: "#fff",
+                color: "#1E3A8A",
+                "&:hover": { bgcolor: "#F0ECE1" },
+              }}
             >
-              <svg
-                className="h-4 w-4 text-gray-900 dark:text-white"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 18 2"
-              >
-                <path stroke="currentColor" strokeWidth="2" d="M1 1h16" />
-              </svg>
-            </button>
-            <input
-              type="text"
-              className="w-10 text-center text-sm bg-transparent"
+              <RemoveIcon />
+            </IconButton>
+            <TextField
               value={quantity}
-              readOnly
+              size="small"
+              inputProps={{
+                style: {
+                  width: 32,
+                  textAlign: "center",
+                  fontWeight: 700,
+                  fontSize: 16,
+                  padding: 0,
+                },
+                readOnly: true,
+              }}
+              sx={{
+                "& .MuiInputBase-root": {
+                  bgcolor: "#fff",
+                  borderRadius: 1,
+                  px: 0,
+                },
+                width: 40,
+              }}
             />
-            <button
-              className="h-6 w-6 flex items-center justify-center rounded border bg-green hover:bg-red-700"
+            <IconButton
+              size="small"
               onClick={handleIncrease}
+              sx={{
+                border: "1px solid #F0ECE1",
+                bgcolor: "#fff",
+                color: "#1E3A8A",
+                "&:hover": { bgcolor: "#F0ECE1" },
+              }}
             >
-              <svg
-                className="h-4 w-4 text-gray-900 dark:text-white"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 18 18"
-              >
-                <path stroke="currentColor" strokeWidth="2" d="M9 1v16M1 9h16" />
-              </svg>
-            </button>
-          </div>
+              <AddIcon />
+            </IconButton>
+          </Box>
 
           {/* Price */}
-          <p className="text-base w-[150px] font-bold text-gray-900 text-right">
+          <Typography
+            fontWeight={700}
+            fontSize={17}
+            color="#E600A0"
+            sx={{ minWidth: 110, textAlign: "right" }}
+          >
             {ProductCart.productInfo.unitPrice * quantity} VNĐ
-          </p>
-        </div>
-      </div>
-    </div>
+          </Typography>
+        </Box>
+      </Box>
+    </Paper>
   );
 }

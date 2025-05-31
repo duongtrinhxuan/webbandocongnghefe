@@ -10,6 +10,15 @@ import CartItem from "../components/CartItem";
 import { createReceipt } from "../services/OrderService";
 import { useNavigate } from "react-router-dom";
 import useCartStore from "../zustand/useCartStore";
+import {
+  Box,
+  Typography,
+  Paper,
+  Divider,
+  Button,
+  Grid,
+} from "@mui/material";
+
 export default function CartPage() {
   const [carts, setCarts] = useState<Cart>({
     id: "",
@@ -20,6 +29,7 @@ export default function CartPage() {
   const { setCartDetail } = useCartStore();
   const nav = useNavigate();
   const [total, setTotal] = useState(0);
+
   const updateTotal = () => {
     let tmp = 0;
     carts.shops.map((shop) => {
@@ -29,6 +39,7 @@ export default function CartPage() {
     });
     setTotal(tmp);
   };
+
   useEffect(() => {
     const totalCartDetail = carts.shops.reduce(
       (sum, shop) => sum + shop.products.length,
@@ -36,6 +47,7 @@ export default function CartPage() {
     );
     setCartDetail(totalCartDetail);
   }, [carts]);
+
   useEffect(() => {
     if (user) {
       getCarts(user?.id as string).then((data) => {
@@ -44,22 +56,23 @@ export default function CartPage() {
       });
     }
   }, [user]);
+
   useEffect(() => {
     if (carts) {
       updateTotal();
     }
   }, [carts]);
+
   const DeleteCartItem = async (id: string) => {
     try {
-      await deleteCartItem(id); // Xóa sản phẩm khỏi server
-  
-      // Lấy lại danh sách giỏ hàng từ server sau khi xóa
+      await deleteCartItem(id);
       const updatedCarts = await getCarts(user?.id as string);
-      setCarts(updatedCarts[0]); // Cập nhật lại state với danh sách mới
+      setCarts(updatedCarts[0]);
     } catch (error) {
       console.error("Error deleting cart item:", error);
     }
   };
+
   const updateQuantity = (
     idCart: string,
     shopId: string,
@@ -83,115 +96,169 @@ export default function CartPage() {
     }));
     editQuantity(carts.id, idCart, productId, newQuantity);
   };
+
   const CreateReceipt = async () => {
-    if (!carts || carts.shops.length==0) {
+    if (!carts || carts.shops.length === 0) {
       console.error("Giỏ hàng trống hoặc không hợp lệ");
       return;
     }
-
-    // Gom toàn bộ sản phẩm từ các cửa hàng
     const tmp = carts.shops.flatMap((shop) => shop.products);
-    // Gửi dữ liệu tạo hóa đơn
-      createReceipt(carts.userId, tmp).then((data)=>{
-        nav(`/receipt`, { state: { receiptData: data } });
-      })
-      tmp.map((item)=>{
-        deleteCartItem(item.id)
-      })
+    createReceipt(carts.userId, tmp).then((data) => {
+      nav(`/receipt`, { state: { receiptData: data } });
+    });
+    tmp.map((item) => {
+      deleteCartItem(item.id);
+    });
   };
 
   return (
-    <section className="bg-white py-8 antialiased  md:py-16">
-      <div className="mx-auto max-w-screen-xl px-4 2xl:px-0">
-        <h2 className="text-xl font-semibold text-gray-900 sm:text-2xl">
+    <Box
+      sx={{
+        minHeight: "100vh",
+        width: "100vw",
+        background: "#f9f9f9",
+        py: 4,
+        px: { xs: 1, md: 4 },
+        boxSizing: "border-box",
+      }}
+    >
+      <Box
+        sx={{
+          maxWidth: 1200,
+          mx: "auto",
+        }}
+      >
+        <Typography
+          variant="h4"
+          fontWeight={800}
+          sx={{ color: "#1E3A8A", mb: 4, letterSpacing: 1 }}
+        >
           Giỏ Hàng
-        </h2>
-
-        <div className="mt-6 sm:mt-8 md:gap-6 lg:flex lg:items-start xl:gap-8">
-          <div className="mx-auto w-full flex-none lg:max-w-2xl xl:max-w-4xl">
-            <div className="space-y-6">
-              {carts?.shops?.map((shop) => (
-                <div>
-                  <div
-                    className="flex items-center space-x-2 mb-2"
-                    key={shop.shopId}
-                  >
-                    <img
-                      className="w-auto h-10 object-contain"
-                      src={shop.shopInfo?.image}
-                      alt="shop.shopInfo.name"
-                    />
-                    <span className="font-semibold">{shop.shopInfo?.name}</span>
-                  </div>
-                  {shop.products.map((product) => (
-                    <div>
-                      <CartItem
-                        ProductCart={product}
-                        onQuantityChange={(productId, newQuantity) =>
-                          updateQuantity(
-                            product.id,
-                            shop.shopId,
-                            productId,
-                            newQuantity
-                          )
-                        }
-                        DeleteCartItem={() => DeleteCartItem(product.id)}
-                      />
-                    </div>
-                  ))}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="mx-auto mt-6 max-w-4xl flex-1 space-y-6 lg:mt-0 lg:w-full">
-            <div
-              style={{ backgroundColor: "#FBFAF1" }}
-              className="space-y-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm sm:p-6"
+        </Typography>
+        <Grid container spacing={4} alignItems="flex-start">
+          {/* Cart Items */}
+          <Grid item xs={12} md={8}>
+            <Paper
+              elevation={3}
+              sx={{
+                borderRadius: 4,
+                p: { xs: 2, md: 4 },
+                background: "#fff",
+                boxShadow: "0 4px 16px rgba(30,58,138,0.08)",
+                mb: 2,
+              }}
             >
-              <p className="text-xl font-semibold text-gray-900 ">
+              {carts?.shops?.length === 0 ? (
+                <Typography color="text.secondary" align="center">
+                  Giỏ hàng của bạn đang trống.
+                </Typography>
+              ) : (
+                carts?.shops?.map((shop) => (
+                  <Box key={shop.shopId} mb={4}>
+                    <Box display="flex" alignItems="center" mb={2} gap={2}>
+                      <img
+                        style={{
+                          width: 40,
+                          height: 40,
+                          objectFit: "cover",
+                          borderRadius: 8,
+                          border: "1px solid #F0ECE1",
+                          background: "#fff",
+                        }}
+                        src={shop.shopInfo?.image}
+                        alt={shop.shopInfo?.name}
+                      />
+                      <Typography fontWeight={700} fontSize={18} color="#1E3A8A">
+                        {shop.shopInfo?.name}
+                      </Typography>
+                    </Box>
+                    <Divider sx={{ mb: 2 }} />
+                    {shop.products.map((product) => (
+                      <Box key={product.id} mb={2}>
+                        <CartItem
+                          ProductCart={product}
+                          onQuantityChange={(productId, newQuantity) =>
+                            updateQuantity(
+                              product.id,
+                              shop.shopId,
+                              productId,
+                              newQuantity
+                            )
+                          }
+                          DeleteCartItem={() => DeleteCartItem(product.id)}
+                        />
+                        <Divider sx={{ my: 2 }} />
+                      </Box>
+                    ))}
+                  </Box>
+                ))
+              )}
+            </Paper>
+          </Grid>
+          {/* Order Summary */}
+          <Grid item xs={12} md={4}>
+            <Paper
+              elevation={3}
+              sx={{
+                borderRadius: 4,
+                p: { xs: 2, md: 4 },
+                background: "#fff",
+                boxShadow: "0 4px 16px rgba(30,58,138,0.08)",
+                mb: 2,
+                position: "sticky",
+                top: 32,
+              }}
+            >
+              <Typography
+                variant="h5"
+                fontWeight={700}
+                sx={{ color: "#1E3A8A", mb: 2 }}
+              >
                 Đơn Hàng
-              </p>
-
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <dl className="flex items-center justify-between gap-4">
-                    <dt className="text-base font-normal text-gray-500 dark:text-gray-400">
-                      Giá Gốc
-                    </dt>
-                    <dd className="text-base font-medium text-gray-900 ">
-                      {total} VNĐ
-                    </dd>
-                  </dl>
-
-                  <dl className="flex items-center justify-between gap-4">
-                    <dt className="text-base font-normal text-gray-500 dark:text-gray-400">
-                      Phí Ship
-                    </dt>
-                    <dd className="text-base font-medium text-gray-900 ">
-                      30000 VNĐ
-                    </dd>
-                  </dl>
-                </div>
-
-                <dl className="flex items-center justify-between gap-4 border-t border-gray-200 pt-2 dark:border-gray-700">
-                  <dt className="text-base font-bold text-gray-900 ">Thành Tiền</dt>
-                  <dd className="text-base font-bold text-gray-900 ">
+              </Typography>
+              <Box sx={{ mb: 2 }}>
+                <Box display="flex" justifyContent="space-between" mb={1}>
+                  <Typography color="text.secondary">Giá Gốc</Typography>
+                  <Typography fontWeight={600}>{total} VNĐ</Typography>
+                </Box>
+                <Box display="flex" justifyContent="space-between" mb={1}>
+                  <Typography color="text.secondary">Phí Ship</Typography>
+                  <Typography fontWeight={600}>30,000 VNĐ</Typography>
+                </Box>
+                <Divider sx={{ my: 2 }} />
+                <Box display="flex" justifyContent="space-between">
+                  <Typography fontWeight={700} color="#1E3A8A">
+                    Thành Tiền
+                  </Typography>
+                  <Typography fontWeight={700} color="#1E3A8A">
                     {total + 30000} VNĐ
-                  </dd>
-                </dl>
-              </div>
-
-              <button
-                className=" p-1 w-full border bg-white text-black rounded-md"
+                  </Typography>
+                </Box>
+              </Box>
+              <Button
+                variant="contained"
+                fullWidth
+                sx={{
+                  mt: 2,
+                  fontWeight: 700,
+                  fontSize: 18,
+                  borderRadius: 3,
+                  bgcolor: "#F59E42",
+                  color: "#fff",
+                  boxShadow: "none",
+                  "&:hover": {
+                    bgcolor: "#1E3A8A",
+                    color: "#fff",
+                  },
+                }}
                 onClick={CreateReceipt}
               >
                 Xác nhận
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+              </Button>
+            </Paper>
+          </Grid>
+        </Grid>
+      </Box>
+    </Box>
   );
 }
