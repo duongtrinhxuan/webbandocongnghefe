@@ -6,6 +6,7 @@ import {
   Typography,
   CircularProgress,
   Pagination,
+  Paper
 } from "@mui/material";
 import styles from './ProductList.module.css';
 import ProductCard from '../ProductCard/ProductCard';
@@ -64,60 +65,86 @@ const ProductList: React.FC = () => {
       ? "Sản Phẩm"
       : filters.category || "Sản Phẩm";
 
-    return (
-      <Box sx={{ width: "80%", margin: "0 auto", padding: 3 }}>
-        <Grid container spacing={2}>
-        <Grid item xs={12} md={3}>
-          <Box
-           sx={{
-             display: "flex",
-             flexDirection: "column",
-             alignItems: "left",
-             justifyContent: "center",
-             height: "100%",
-            }}>
-             <Typography fontWeight={800} variant="h4">
-              {categoryTitle}
-            </Typography>
-            <Typography mt={1} variant="body2" sx={{ color: "#2266AA" }}>
-              {displayedProducts.length}{" "}
-              {displayedProducts.length > 1 ? "products" : "product"}
-            </Typography>
+   return (
+  <Box
+    sx={{
+      width: "100vw",
+      minHeight: "100vh",
+      background: "#f9f9f9",
+      py: 4,
+      px: { xs: 1, md: 4 },
+      boxSizing: "border-box",
+    }}
+  >
+    <Grid container spacing={4} sx={{ maxWidth: 1400, mx: "auto" }}>
+      {/* Sidebar: Category & Filter */}
+      <Grid item xs={12} md={3}>
+  <Box
+    sx={{
+      display: "flex",
+      flexDirection: "column",
+      alignItems: { xs: "center", md: "flex-start" },
+      justifyContent: "flex-start",
+      height: "100%",
+      // Đổi màu nền cho phù hợp với navbar/footer
+      background: "linear-gradient(135deg, #1E3A8A 60%, #F59E42 100%)",
+      borderRadius: 3,
+      boxShadow: 2,
+      p: 3,
+      mb: { xs: 2, md: 0 },
+      color: "#fff",
+      minHeight: 320,
+    }}
+  >
+    <Typography fontWeight={800} variant="h4" sx={{ color: "#fff" }}>
+      {categoryTitle}
+    </Typography>
+    <Typography mt={1} variant="body1" sx={{ color: "#FDE68A", fontWeight: 600 }}>
+      {displayedProducts.length}{" "}
+      {displayedProducts.length > 1 ? "products" : "product"}
+    </Typography>
+    <Box sx={{ width: "100%", mt: 3 }}>
+      {/* Bọc FilterProduct bằng Paper để giữ nền trắng cho filter */}
+      <Paper
+        elevation={0}
+        sx={{
+          background: "#fff",
+          borderRadius: 2,
+          p: 2,
+          width: "100%",
+          color: "#1E3A8A",
+        }}
+      >
+        <FilterProduct />
+      </Paper>
+    </Box>
+  </Box>
+</Grid>
 
+      {/* Main Content: Search + Product Grid */}
+      <Grid item xs={12} md={9}>
+        <Paper
+          elevation={3}
+          sx={{
+            borderRadius: 3,
+            p: { xs: 2, md: 4 },
+            mb: 3,
+            background: "#fff",
+            boxShadow: "0 4px 16px rgba(30,58,138,0.08)",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "stretch",
+          }}
+        >
+          <Box display="flex" justifyContent="flex-end" mb={3}>
+            <SearchFilter />
           </Box>
-        </Grid>
-
-        {/* {Right} */}
-        <Grid item xs={12} md={9}>
-        <Grid container justifyContent="space-between" alignItems="center">
-            <Grid item>
-              <SearchFilter />
-            </Grid>
-          </Grid>
-        </Grid>
-
-        {/* {Bottom Left} */}
-        <Grid item xs={12} md={3}>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "flex-start",
-            }}
-          >
-            <FilterProduct />
-          </Box>
-        </Grid>
-         {/* Bottom-right: ProductGrid */}
-         <Grid item xs={12} md={9}>
           <ProductGrid products={paginatedProducts} />
-
-          {/* Pagination */}
           <Box
             sx={{
               display: "flex",
               justifyContent: "center",
-              marginTop: 3,
+              marginTop: 4,
             }}
           >
             <Pagination
@@ -125,17 +152,14 @@ const ProductList: React.FC = () => {
               page={currentPage}
               onChange={handlePageChange}
               color="primary"
+              size="large"
             />
           </Box>
-        </Grid>
-        </Grid>
-      </Box>
-      // <div className={styles.productList}>
-      //   {products.map((product) => (
-      //     <ProductCard key={product.id} product={product} />
-      //   ))}
-      // </div>
-    );
+        </Paper>
+      </Grid>
+    </Grid>
+  </Box>
+);
 
 };
 

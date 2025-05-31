@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { TextField, IconButton, InputAdornment, Box } from "@mui/material";
+import { TextField, IconButton, InputAdornment, Box, Paper } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import useProductStore from "../../zustand/useProductStore";
 
@@ -20,46 +20,61 @@ const SearchFilter = () => {
   return (
     <Box
       sx={{
+        width: "100%",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        width: "100%",
-        maxWidth: 600,
-        margin: "0 auto",
-        padding: 2,
+        my: 2,
       }}
     >
-      <TextField
-        label="Tìm sản phẩm ..."
-        variant="outlined"
-        value={query}
-        onChange={handleSearchChange}
-        fullWidth
+      <Paper
+        elevation={3}
         sx={{
-          borderRadius: 2,
-          boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
-          "& .MuiOutlinedInput-root": {
-            borderRadius: 2,
-          },
+          width: { xs: "95vw", sm: 500, md: 600 },
+          px: 2,
+          py: 1,
+          borderRadius: 4,
+          display: "flex",
+          alignItems: "center",
+          boxShadow: "0 4px 16px rgba(30,58,138,0.08)",
+          background: "#fff",
         }}
-        InputProps={{
-          endAdornment: (
-            <InputAdornment position="end">
-              <IconButton
-                onClick={handleSearch}
-                sx={{
-                  color: "#1976d2",
-                  "&:hover": {
-                    backgroundColor: "#e3f2fd",
-                  },
-                }}
-              >
-                <SearchIcon />
-              </IconButton>
-            </InputAdornment>
-          ),
-        }}
-      />
+      >
+        <TextField
+          label="Tìm sản phẩm ..."
+          variant="outlined"
+          value={query}
+          onChange={handleSearchChange}
+          fullWidth
+          sx={{
+            "& .MuiOutlinedInput-root": {
+              borderRadius: 3,
+              background: "#F0ECE1",
+            },
+            "& .MuiInputLabel-root": {
+              fontWeight: 600,
+              color: "#1E3A8A",
+            },
+          }}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  onClick={handleSearch}
+                  sx={{
+                    color: "#1E3A8A",
+                    "&:hover": {
+                      backgroundColor: "#e3f2fd",
+                    },
+                  }}
+                >
+                  <SearchIcon />
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
+        />
+      </Paper>
     </Box>
   );
 };

@@ -91,7 +91,6 @@ export default function CartPage() {
 
     // Gom toàn bộ sản phẩm từ các cửa hàng
     const tmp = carts.shops.flatMap((shop) => shop.products);
-
     // Gửi dữ liệu tạo hóa đơn
       createReceipt(carts.userId, tmp).then((data)=>{
         nav(`/receipt`, { state: { receiptData: data } });
