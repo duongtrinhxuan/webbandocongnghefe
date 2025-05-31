@@ -1,6 +1,18 @@
-import{ useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Category, getCategoryNamebyId } from '../../pages/ChinhSuaSanPham';
 import { Product } from '../../data/productdetail';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Checkbox,
+  Button,
+  Typography,
+} from "@mui/material";
 
 // Định nghĩa props cho ProductList
 interface ProductListProps {
@@ -10,89 +22,109 @@ interface ProductListProps {
   categories: Category[];
 }
 
-export default function ProductList({ products, editProduct,onSelectedProductsChange,categories }: ProductListProps) {
+export default function ProductList({
+  products,
+  editProduct,
+  onSelectedProductsChange,
+  categories,
+}: ProductListProps) {
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
 
   useEffect(() => {
     onSelectedProductsChange(selectedProducts);
   }, [selectedProducts, onSelectedProductsChange]);
-  // Hàm xử lý khi thay đổi checkbox của một sản phẩm
+
   const handleCheckboxChange = (id: string) => {
-    if (!id) return; // Nếu không có id, bỏ qua
-  
-    setSelectedProducts((prevSelected) => {
-      const isSelected = prevSelected.includes(id);
-      const newSelected = isSelected
-        ? prevSelected.filter((productId) => productId !== id) // Bỏ chọn
-        : [...prevSelected, id]; // Thêm vào danh sách
-  
-      return newSelected;
-    });
+    if (!id) return;
+    setSelectedProducts((prevSelected) =>
+      prevSelected.includes(id)
+        ? prevSelected.filter((productId) => productId !== id)
+        : [...prevSelected, id]
+    );
   };
 
-  // Hàm xử lý khi chọn tất cả hoặc bỏ chọn tất cả
   const handleSelectAll = () => {
-    const newSelected = selectedProducts.length === products.length
-      ? [] // Nếu đã chọn hết -> bỏ chọn tất cả
-      : products.map((product) => product.id); // Nếu chưa chọn hết -> chọn tất cả
-  
+    const newSelected =
+      selectedProducts.length === products.length && products.length > 0
+        ? []
+        : products.map((product) => product.id);
     setSelectedProducts(newSelected);
   };
-  
+
   return (
-    <div>
-      <h2 className="text-xl font-bold mb-2 ">Danh sách sản phẩm</h2>
-      <div className="overflow-x-auto w-[75vw]">
-        <table className="min-w-full border border-gray-300">
-          <thead>
-            <tr style={{backgroundColor:"#FBFAF1"}}>
-              <th className="border border-gray-300 p-2">
-                <input
-                  type="checkbox"
-                  checked={selectedProducts.length === products.length}
-                  onChange={handleSelectAll}
+    <TableContainer component={Paper} sx={{ width: "100%", mt: 2, borderRadius: 3, boxSizing: "border-box" }}>
+      <Typography variant="h6" sx={{ fontWeight: 700, color: "#1E3A8A", p: 2 }}>
+        Danh sách sản phẩm
+      </Typography>
+      <Table>
+        <TableHead sx={{ backgroundColor: "#1E3A8A" }}>
+          <TableRow>
+            <TableCell align="center" sx={{ color: "#fff", fontWeight: "bold" }}>
+              <Checkbox
+                checked={selectedProducts.length === products.length && products.length > 0}
+                onChange={handleSelectAll}
+                sx={{ color: "#fff", '&.Mui-checked': { color: "#F59E42" } }}
+              />
+            </TableCell>
+            <TableCell sx={{ color: "#fff", fontWeight: "bold" }}>Tên sản phẩm</TableCell>
+            <TableCell sx={{ color: "#fff", fontWeight: "bold" }}>Đơn giá</TableCell>
+            <TableCell sx={{ color: "#fff", fontWeight: "bold" }}>Phân loại</TableCell>
+            <TableCell sx={{ color: "#fff", fontWeight: "bold" }}>Số lượng</TableCell>
+            <TableCell sx={{ color: "#fff", fontWeight: "bold" }}>Hình ảnh</TableCell>
+            <TableCell sx={{ color: "#fff", fontWeight: "bold" }}>Mô tả</TableCell>
+            <TableCell sx={{ color: "#fff", fontWeight: "bold" }}>Thao tác</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {products.map((product) => (
+            <TableRow key={product.id} hover>
+              <TableCell align="center">
+                <Checkbox
+                  checked={selectedProducts.includes(product.id)}
+                  onChange={() => handleCheckboxChange(product.id)}
+                  sx={{ color: "#1E3A8A", '&.Mui-checked': { color: "#F59E42" } }}
                 />
-              </th>
-              <th className="border border-gray-300 p-2 text-left">Tên sản phẩm</th>
-              <th className="border border-gray-300 p-2 text-left">Đơn giá</th>
-              <th className="border border-gray-300 p-2 text-left">phân loại</th>
-              <th className="border border-gray-300 p-2 text-left">Số lượng</th>
-              <th className="border border-gray-300 p-2 text-left">Hình ảnh</th>
-              <th className="border border-gray-300 p-2 text-left">Mô tả</th>
-              <th className="border border-gray-300 p-2 text-left">Thao tác</th>
-            </tr>
-          </thead>
-          <tbody>
-            {products.map((product) => (
-              <tr key={product.id}>
-                <td className="border border-gray-300 p-2 text-center">
-                  <input
-                    type="checkbox"
-                    checked={selectedProducts.includes(product.id)}
-                    onChange={() => handleCheckboxChange(product.id)}
-                  />
-                </td>
-                <td className="border border-gray-300 p-2">{product.productName}</td>
-                <td className="border border-gray-300 p-2">{product.unitPrice} VNĐ</td>
-                <td className="border border-gray-300 p-2">{getCategoryNamebyId(product.categoryId,categories)}</td>
-                <td className="border border-gray-300 p-2">{product.quantity}</td>
-                <td className="border border-gray-300 p-2">
-                  <img src={product.image} alt={product.productName} className="w-20 h-20 object-contain" />
-                </td>
-                <td className="border border-gray-300 p-2">{product.description}</td>
-                <td className="border border-gray-300 p-2">
-                  <button
-                    onClick={()=>editProduct(product.id)}
-                    className="bg-black text-white px-2 py-1 rounded"
-                  >
-                    Edit
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
+              </TableCell>
+              <TableCell>{product.productName}</TableCell>
+              <TableCell>{product.unitPrice} VNĐ</TableCell>
+              <TableCell>{getCategoryNamebyId(product.categoryId, categories)}</TableCell>
+              <TableCell>{product.quantity}</TableCell>
+              <TableCell>
+                <img
+                  src={product.image}
+                  alt={product.productName}
+                  style={{ width: 80, height: 80, objectFit: "contain", borderRadius: 8 }}
+                />
+              </TableCell>
+              <TableCell>{product.description}</TableCell>
+              <TableCell>
+                <Button
+                  onClick={() => editProduct(product.id)}
+                  variant="contained"
+                  sx={{
+                    backgroundColor: "#1E3A8A",
+                    color: "#fff",
+                    borderRadius: "8px",
+                    textTransform: "none",
+                    px: 2,
+                    fontWeight: 600,
+                    "&:hover": { backgroundColor: "#155a9c" },
+                  }}
+                >
+                  Edit
+                </Button>
+              </TableCell>
+            </TableRow>
+          ))}
+          {products.length === 0 && (
+            <TableRow>
+              <TableCell colSpan={8} align="center" sx={{ color: "#888" }}>
+                Không có sản phẩm nào.
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+    </TableContainer>
   );
 }
