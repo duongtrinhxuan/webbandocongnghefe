@@ -89,7 +89,6 @@ export default function ChiTietDonHang() {
 
   return (
     <Box className="flex w-screen" sx={{ minHeight: "100vh", background: "#f9f9f9" }}>
-      <DashboardNav />
       <Box flex={1} display="flex" alignItems="center" justifyContent="center" minHeight="100vh" sx={{ py: 6 }}>
         <Paper
           elevation={3}
